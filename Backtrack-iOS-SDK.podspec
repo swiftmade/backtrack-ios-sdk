@@ -19,4 +19,5 @@ Pod::Spec.new do |spec|
   spec.source_files = 'Backtrack-iOS-SDK/*.{h,m}'
   spec.requires_arc = true
   spec.license      = { :type => 'APACHE2', :file => 'LICENSE' }
+  spec.dependency 'AFNetworking', '~> 2.0'
 end
