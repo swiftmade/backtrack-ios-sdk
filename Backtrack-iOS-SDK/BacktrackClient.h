@@ -9,11 +9,14 @@
 #import <Foundation/Foundation.h>
 #import "BacktrackSDK.h"
 #import "BacktrackUser.h"
+#import "BacktrackBundle.h"
 #import "BTGlobals.h"
 #import "BTMutableURLRequest.h"
 #import "BTQueryStringPair.h"
 
+
 @class BacktrackUser;
+@class BacktrackBundle;
 
 @interface BacktrackClient : NSObject
 
@@ -42,4 +45,25 @@
 - (BOOL) isAuthenticated;
 
 - (void) logoutWithCompletion:(BTBooleanResultBlock)completionBlock;
+
+// Core methods
+- (void)getPath:(NSString *)path
+     parameters:(NSDictionary *)parameters
+        success:(void (^)(id responseObject))success
+        failure:(void (^)(NSError *error))failure;
+
+- (void)postPath:(NSString *)path
+      parameters:(NSDictionary *)parameters
+         success:(void (^)(id responseObject))success
+         failure:(void (^)(NSError *error))failure;
+
+- (void)putPath:(NSString *)path
+     parameters:(NSDictionary *)parameters
+        success:(void (^)(id responseObject))success
+        failure:(void (^)(NSError *error))failure;
+
+- (void)deletePath:(NSString *)path
+        parameters:(NSDictionary *)parameters
+           success:(void (^)(id responseObject))success
+           failure:(void (^)(NSError *error))failure;
 @end

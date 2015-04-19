@@ -6,8 +6,17 @@
 //
 //
 
-#import <Foundation/Foundation.h>
+#import "BacktrackClient.h"
+#import "BTGlobals.h"
 
 @interface BacktrackBundle : NSObject
+
+@property (nonatomic, copy) NSNumber *version;
+
++(int)getLocalVersion;
++(void)setLocalVersion:(int)version;
+
++ (void)checkForUpdates:(BTObjectResultBlock)completionBlock;
++ (void)downloadBundle:(NSString*)url progress:(BTDownloadProgressBlock)progressBlock completionHandler:(BTVoidBlock)completionBlock;
 
 @end

@@ -14,5 +14,7 @@ typedef void (^BTArrayResultBlock)(NSArray *objects, NSError *error);
 typedef void (^BTObjectResultBlock)(id object, NSError *error);
 typedef void (^BTBooleanResultBlock)(BOOL success, NSError *error);
 typedef void (^BTIntegerResultBlock)(NSInteger count, NSError *error);
+typedef void (^BTDownloadProgressBlock)(NSUInteger bytesRead, long long totalBytesRead, long long totalBytesExpectedToRead);
+typedef void (^BTVoidBlock)();
 
 @end
