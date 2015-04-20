@@ -49,6 +49,10 @@
 // User
 - (void) updateUserWithCompletion:(BTObjectResultBlock)completionBlock;
 
+- (void) changeOldPassword:(NSString *)oldPassword
+             toNewPassword:(NSString *)newPassword
+                completion:(BTBooleanResultBlock)completionBlock;
+
 // Core methods
 - (void)getPath:(NSString *)path
      parameters:(NSDictionary *)parameters

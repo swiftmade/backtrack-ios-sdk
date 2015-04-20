@@ -329,7 +329,27 @@ NSString* const BTUserKeyForUserDefaults = @"com.backtrack.user";
               }
               
           }];
+}
+
+- (void) changeOldPassword:(NSString *)oldPassword
+             toNewPassword:(NSString *)newPassword
+                completion:(BTBooleanResultBlock)completionBlock {
     
+    [self postPath:@"users/change_password"
+       parameters:@{@"old_password": oldPassword, @"password": newPassword}
+          success:^(id responseObject) {
+              
+              if (completionBlock) {
+                  completionBlock(YES, nil);
+              }
+              
+          } failure:^(NSError *error) {
+              
+              if (completionBlock) {
+                  completionBlock(NO, error);
+              }
+              
+          }];
 }
 
 #pragma mark - URL Serialization
