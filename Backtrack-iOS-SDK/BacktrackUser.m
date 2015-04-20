@@ -23,7 +23,6 @@
     self = [super init];
     
     if (self) {
-        
         _email = dict[@"email"];
         _first_name = dict[@"first_name"];
         _last_name = dict[@"last_name"];
@@ -65,10 +64,10 @@
 #pragma mark - Update
 
 - (void) updateWithCompletion:(BTObjectResultBlock)completionBlock {
-    /*
+
     BacktrackClient *client = [BacktrackClient sharedClient];
     [client updateUserWithCompletion:completionBlock];
-     */
+
 }
 
 
@@ -100,6 +99,9 @@
     if(self) {
 
         decodeObject(_email);
+        decodeObject(_first_name);
+        decodeObject(_last_name);
+        decodeObject(_phone);
         decodeObject(_authenticationToken);
         
     }
@@ -111,6 +113,9 @@
 - (void)encodeWithCoder:(NSCoder *)aCoder {
     
     encodeObject(_email);
+    encodeObject(_first_name);
+    encodeObject(_last_name);
+    encodeObject(_phone);
     encodeObject(_authenticationToken);
     
 }

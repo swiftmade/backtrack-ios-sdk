@@ -46,6 +46,9 @@
 
 - (void) logoutWithCompletion:(BTBooleanResultBlock)completionBlock;
 
+// User
+- (void) updateUserWithCompletion:(BTObjectResultBlock)completionBlock;
+
 // Core methods
 - (void)getPath:(NSString *)path
      parameters:(NSDictionary *)parameters

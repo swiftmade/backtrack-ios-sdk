@@ -208,6 +208,7 @@ NSString* const BTUserKeyForUserDefaults = @"com.backtrack.user";
                
                if (token) {
                    
+                   NSLog(@"user data: %@", responseObject[@"data"]);
                    BacktrackUser *user = [[BacktrackUser alloc] initWithDictionary:responseObject[@"data"]];
                    user.authenticationToken = token;
                    self.currentUser = user;
@@ -297,6 +298,37 @@ NSString* const BTUserKeyForUserDefaults = @"com.backtrack.user";
                }
                
            }];
+    
+}
+
+
+- (void) updateUserWithCompletion:(BTObjectResultBlock)completionBlock {
+    
+    [self putPath:@"users/1"
+       parameters:@{
+                    @"email": self.currentUser.email,
+                    @"first_name": self.currentUser.first_name,
+                    @"last_name": self.currentUser.last_name,
+                    @"phone": self.currentUser.phone
+                    }
+          success:^(NSDictionary *responseObject) {
+            
+              // save updated data
+              [self saveUserToDisk:self.currentUser];
+              
+              if (completionBlock) {
+                  completionBlock(self.currentUser, nil);
+              }
+              
+          } failure:^(NSError *error) {
+              // restore to the previous state
+              self.currentUser = [self loadUserFromDisk];
+              
+              if (completionBlock) {
+                  completionBlock(nil, error);
+              }
+              
+          }];
     
 }
 
