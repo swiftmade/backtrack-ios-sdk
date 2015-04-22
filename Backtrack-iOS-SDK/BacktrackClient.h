@@ -13,7 +13,7 @@
 #import "BTGlobals.h"
 #import "BTMutableURLRequest.h"
 #import "BTQueryStringPair.h"
-
+#import "BTDatabase.h"
 
 @class BacktrackUser;
 @class BacktrackBundle;

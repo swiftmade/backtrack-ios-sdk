@@ -16,7 +16,6 @@ NSInteger const kPageLength = 50;
 
 NSString * const kAuthenticationTokenExpiredNotification = @"com.backtrack.tokenExpired";
 
-
 static NSString * const boundary = @"BTSBOX_BOUNDARY_STRING";
 
 static NSString * const kBTCharactersToBeEscapedInQuery = @"@/:?&=$;+!#()',*";

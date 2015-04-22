@@ -10,7 +10,6 @@
 #import <AFNetworking/AFNetworking.h>
 
 NSString* const BTBundleVersionKeyForUserDefaults = @"com.backtrack.bundle_version";
-NSString* const BTBundleFileName = @"BacktrackDataBundle.sqlite";
 
 @implementation BacktrackBundle
 
@@ -53,16 +52,16 @@ NSString* const BTBundleFileName = @"BacktrackDataBundle.sqlite";
 {
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:url]];
     AFURLConnectionOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
+    // save Data Bundle to disk
 
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *filePath = [[paths objectAtIndex:0] stringByAppendingPathComponent:BTBundleFileName];
-    operation.outputStream = [NSOutputStream outputStreamToFileAtPath:filePath append:NO];
+    operation.outputStream = [NSOutputStream outputStreamToFileAtPath:[BTDatabase bundleFilePath] append:NO];
     
     if(progressBlock) {
         [operation setDownloadProgressBlock:progressBlock];
     }
     
     if(completionBlock) {
+        
         [operation setCompletionBlock:completionBlock];
     }
 
