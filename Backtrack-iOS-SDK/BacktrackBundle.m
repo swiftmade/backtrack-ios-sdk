@@ -53,21 +53,33 @@ NSString* const BTBundleVersionKeyForUserDefaults = @"com.backtrack.bundle_versi
 {
     NSNumber *version = (NSNumber*)[bundleInfo objectAtIndex:0];
     NSString *url     = [bundleInfo objectAtIndex:1];
+
+    // temporary file
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *filePath = [[paths objectAtIndex:0] stringByAppendingPathComponent:@"bundleDownload"];
     
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:url]];
     AFURLConnectionOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
-    // save Data Bundle to disk
-
-    operation.outputStream = [NSOutputStream outputStreamToFileAtPath:[BTDatabase bundleFilePath] append:NO];
+    // save Data Bundle to disk temporarily
+    operation.outputStream = [NSOutputStream outputStreamToFileAtPath:filePath append:NO];
     
     if(progressBlock) {
         [operation setDownloadProgressBlock:progressBlock];
     }
     
     [operation setCompletionBlock:^{
+        
+        // remove old database file
+        if([[NSFileManager defaultManager] fileExistsAtPath:[BTDatabase bundleFilePath]]) {
+            [[NSFileManager defaultManager] removeItemAtPath:[BTDatabase bundleFilePath] error:nil];
+        }
+        // move the new one
+        [[NSFileManager defaultManager] moveItemAtPath:filePath toPath:[BTDatabase bundleFilePath] error:nil];
         // write version to disk
         [BacktrackBundle setLocalVersion:[version intValue]];
-        //
+        // re-open database
+        [[BTDatabase singleton] reopenDatabase];
+        
         if(completionBlock) {
             completionBlock();
         }
