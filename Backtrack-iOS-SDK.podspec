@@ -19,7 +19,6 @@ Pod::Spec.new do |spec|
   spec.source_files = 'Backtrack-iOS-SDK/*.{h,m}'
   spec.requires_arc = true
   spec.license      = { :type => 'APACHE2', :file => 'LICENSE' }
-  spec.library = 'sqlite3'
   spec.dependency 'AFNetworking', '~> 2.0'
   spec.dependency 'FMDB'
 end
