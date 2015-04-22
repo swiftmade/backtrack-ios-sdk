@@ -37,7 +37,7 @@ NSString* const BTBundleVersionKeyForUserDefaults = @"com.backtrack.bundle_versi
         int remoteVersion = [(NSNumber*)responseObject[@"data"][@"id"] intValue];
         // if there is a new update
         if(remoteVersion > [BacktrackBundle getLocalVersion]) {
-            completionBlock(responseObject[@"data"][@"url"], nil);
+            completionBlock(@[responseObject[@"data"][@"id"], responseObject[@"data"][@"url"]], nil);
         } else {
             // no update
             completionBlock(nil, nil);
@@ -48,8 +48,12 @@ NSString* const BTBundleVersionKeyForUserDefaults = @"com.backtrack.bundle_versi
     }];
 }
 
-+ (void)downloadBundle:(NSString*)url progress:(BTDownloadProgressBlock)progressBlock completionHandler:(BTVoidBlock)completionBlock
+// bundle info is an array: 0 -> bundle id, 1 -> bundle url
++ (void)downloadBundle:(NSArray*)bundleInfo progress:(BTDownloadProgressBlock)progressBlock completionHandler:(BTVoidBlock)completionBlock
 {
+    NSNumber *version = (NSNumber*)[bundleInfo objectAtIndex:0];
+    NSString *url     = [bundleInfo objectAtIndex:1];
+    
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:url]];
     AFURLConnectionOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
     // save Data Bundle to disk
@@ -60,10 +64,14 @@ NSString* const BTBundleVersionKeyForUserDefaults = @"com.backtrack.bundle_versi
         [operation setDownloadProgressBlock:progressBlock];
     }
     
-    if(completionBlock) {
-        
-        [operation setCompletionBlock:completionBlock];
-    }
+    [operation setCompletionBlock:^{
+        // write version to disk
+        [BacktrackBundle setLocalVersion:[version intValue]];
+        //
+        if(completionBlock) {
+            completionBlock();
+        }
+    }];
 
     [operation start];
 }

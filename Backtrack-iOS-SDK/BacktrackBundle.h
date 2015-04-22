@@ -8,7 +8,6 @@
 
 #import "BacktrackClient.h"
 #import "BTGlobals.h"
-#import "BTDatabase.h"
 
 @interface BacktrackBundle : NSObject
 
