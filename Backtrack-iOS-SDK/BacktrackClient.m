@@ -148,8 +148,7 @@ NSString* const BTUserKeyForUserDefaults = @"com.backtrack.user";
     self.currentUser = [self loadUserFromDisk];
     NSURLSessionConfiguration *sessionConfiguration = [NSURLSessionConfiguration defaultSessionConfiguration];
     NSDictionary *headers = @{@"Accept": @"application/json",
-                              @"User-Agent": [NSString stringWithFormat:@"Backtrack iOS SDK %@", VERSION],
-                              @"Language": [BacktrackSDK language]
+                              @"User-Agent": [NSString stringWithFormat:@"Backtrack iOS SDK %@", VERSION]
                               };
     sessionConfiguration.HTTPAdditionalHeaders = headers;
     _session = [NSURLSession sessionWithConfiguration:sessionConfiguration
@@ -366,16 +365,15 @@ NSString* const BTUserKeyForUserDefaults = @"com.backtrack.user";
     }
     
     [request setHTTPMethod:method];
+    [request setValue:[BacktrackSDK language] forHTTPHeaderField:@"Language"];
     
     if(self.currentUser != nil) {
         [request setValue:self.currentUser.authenticationToken forHTTPHeaderField:@"Authorization"];
     } else if(self.clientAccessToken != nil) {
         [request setValue:self.clientAccessToken forHTTPHeaderField:@"Authorization"];
     }
-
     
     request = [[self requestBySerializingRequest:request withParameters:parameters error:nil] mutableCopy];
-    
     return request;
 }
 

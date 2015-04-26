@@ -21,4 +21,5 @@ Pod::Spec.new do |spec|
   spec.license      = { :type => 'APACHE2', :file => 'LICENSE' }
   spec.dependency 'AFNetworking', '~> 2.0'
   spec.dependency 'FMDB'
+  spec.dependency 'SDWebImage', '~>3.7'
 end
