@@ -17,6 +17,6 @@
 +(void)setLocalVersion:(int)version;
 
 + (void)checkForUpdates:(BTObjectResultBlock)completionBlock;
-+ (void)downloadBundle:(NSString*)url progress:(BTDownloadProgressBlock)progressBlock completionHandler:(BTVoidBlock)completionBlock;
++ (void)downloadBundle:(NSArray*)bundleInfo progress:(BTDownloadProgressBlock)progressBlock completionHandler:(BTVoidBlock)completionBlock;
 
 @end
