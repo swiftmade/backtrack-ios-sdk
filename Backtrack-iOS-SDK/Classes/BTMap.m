@@ -33,7 +33,28 @@
     mapView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
     
     mapView.delegate = self;
+    
+    RMAnnotation* test = [RMAnnotation annotationWithMapView:mapView coordinate:CLLocationCoordinate2DMake(36.1872,29.7949) andTitle:@"test"];
+    [mapView addAnnotation:test];
+    
     return self;
 }
+
+
+- (RMMapLayer *)mapView:(RMMapView *)mapView layerForAnnotation:(RMAnnotation *)annotation
+{
+    if (annotation.isUserLocationAnnotation)
+        return nil;
+    
+
+    
+    RMMarker *marker = [[RMMarker alloc] initWithMapboxMarkerImage];
+
+    
+    marker.canShowCallout = YES;
+    
+    return marker;
+}
+
 
 @end
