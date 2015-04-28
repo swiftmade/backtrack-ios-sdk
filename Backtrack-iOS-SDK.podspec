@@ -16,9 +16,10 @@ Pod::Spec.new do |spec|
   spec.source       = { :git => 'https://github.com/aozisik/backtrack-ios-sdk.git', :tag => spec.version.to_s }
   spec.platform     = :ios
   spec.ios.deployment_target = "6.0"
+  spec.prepare_command = 'ruby ./Maki-Crawler/crawler.rb'
   spec.source_files = 'Backtrack-iOS-SDK/Classes/*.{h,m}'
   spec.resource_bundles = {
-    '${POD_NAME}' => ['Backtrack-iOS-SDK/Assets/*.png']
+    'MakiBundle' => ['Backtrack-iOS-SDK/Assets/*.png']
   }
   spec.requires_arc = true
   spec.license      = { :type => 'APACHE2', :file => 'LICENSE' }
