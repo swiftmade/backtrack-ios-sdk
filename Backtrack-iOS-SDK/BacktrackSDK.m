@@ -44,7 +44,7 @@
     //
     NSArray* languages = [[NSUserDefaults standardUserDefaults] objectForKey:@"AppleLanguages"];
     
-    if(languages != nil || [languages count] == 0) {
+    if(languages == nil || [languages count] == 0) {
         return @"en"; // fallback language
     }
     
