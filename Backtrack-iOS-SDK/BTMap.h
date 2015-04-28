@@ -5,9 +5,12 @@
 //  Created by Ahmet Özışık on 28.04.2015.
 //
 //
+#import <Mapbox-iOS-SDK/Mapbox.h>
 
-#import <Foundation/Foundation.h>
+@interface BTMap : NSObject <RMMapViewDelegate>
 
-@interface BTMap : NSObject
+@property(nonatomic, retain) RMMapView* mapView;
+
+-(id)initWithOfflineMap:(NSString*)mapFile onView:(UIView*)mapContainer;
 
 @end
