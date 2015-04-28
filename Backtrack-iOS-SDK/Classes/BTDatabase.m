@@ -24,12 +24,10 @@ static BTDatabase *_database;
 }
 
 - (id)init {
-    if ((self = [super init])) {
-        
+    if (self = [super init]) {
         _database = [FMDatabase databaseWithPath:[BTDatabase bundleFilePath]];
         // actually, it happnes for the first time..
         [self openDatabase];
-        
     }
     
     return self;
@@ -66,10 +64,36 @@ static BTDatabase *_database;
 
 
 +(NSString*)bundleFilePath {
+
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *filePath = [[paths objectAtIndex:0] stringByAppendingPathComponent:BTBundleFileName];
     
+    // copy the file from the main bundle to the documents path if it does not exist
+    if( ! [[NSFileManager defaultManager] fileExistsAtPath:filePath]) {
+        NSString *sourcePath = [[NSBundle mainBundle] pathForResource:@"BacktrackDataBundle" ofType:@"sqlite"];
+        
+        if([[NSFileManager defaultManager] fileExistsAtPath:sourcePath]) {
+            NSLog(@"Important Warning: Please include a BacktrackDataBundle.sqlite in your main bundle");
+            [[NSFileManager defaultManager] copyItemAtPath:sourcePath toPath:filePath error:nil];
+        }
+    }
+    
     return filePath;
+}
+
+#pragma mark points of interest
+-(NSArray*)pointsOfInterestWithScope:(NSString *)scope {
+    FMResultSet *s = [_database executeQuery:@"SELECT * FROM interesting_points"];
+    
+    while([s next]) {
+        //NSLog(@"gotcha");
+    }
+    
+    return @[];
+}
+
+-(NSArray*)allPointsOfInterest {
+    return [self pointsOfInterestWithScope:nil];
 }
 
 @end

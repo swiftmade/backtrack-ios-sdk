@@ -6,6 +6,7 @@
 //
 //
 #import <Mapbox-iOS-SDK/Mapbox.h>
+#import "BTDatabase.h"
 
 @interface BTMap : NSObject <RMMapViewDelegate>
 

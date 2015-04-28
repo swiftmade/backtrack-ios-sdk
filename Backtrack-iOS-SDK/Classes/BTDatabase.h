@@ -19,4 +19,8 @@
 
 +(NSString*)bundleFilePath;
 
+-(NSArray*)allPointsOfInterest;
+-(NSArray*)pointsOfInterestWithScope:(NSString*)scope;
+
+
 @end

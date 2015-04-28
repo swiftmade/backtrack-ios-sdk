@@ -5,7 +5,6 @@
 //  Created by Ahmet Özışık on 28.04.2015.
 //
 //
-
 #import "BTMap.h"
 
 @implementation BTMap
@@ -31,30 +30,11 @@
     mapView.userTrackingMode = RMUserTrackingModeNone;
     // set auto-resizing mask
     mapView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
-    
     mapView.delegate = self;
     
-    RMAnnotation* test = [RMAnnotation annotationWithMapView:mapView coordinate:CLLocationCoordinate2DMake(36.1872,29.7949) andTitle:@"test"];
-    [mapView addAnnotation:test];
-    
+    [[BTDatabase singleton] allPointsOfInterest];
+
     return self;
 }
-
-
-- (RMMapLayer *)mapView:(RMMapView *)mapView layerForAnnotation:(RMAnnotation *)annotation
-{
-    if (annotation.isUserLocationAnnotation)
-        return nil;
-    
-
-    
-    RMMarker *marker = [[RMMarker alloc] initWithMapboxMarkerImage];
-
-    
-    marker.canShowCallout = YES;
-    
-    return marker;
-}
-
 
 @end
