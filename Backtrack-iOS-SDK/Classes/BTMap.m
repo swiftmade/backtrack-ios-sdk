@@ -13,6 +13,7 @@
 -(id)init {
     // no need for an access token, we are completely offline
     [[RMConfiguration sharedInstance] setAccessToken:@"<random string>"];
+    
     return [super init];
 }
 
@@ -37,19 +38,23 @@
 }
 
 -(void)loadInterestingPoints {
-    NSArray *results = [[BTDatabase singleton] allPointsOfInterest];
     
-    for(NSDictionary *point in results) {
+    dispatch_async(dispatch_get_main_queue(), ^{
+
+        NSArray *results = [[BTDatabase singleton] allPointsOfInterest];
         
-        CLLocationDegrees latitude = [point[@"latitude"] doubleValue];
-        CLLocationDegrees longitude = [point[@"longitude"] doubleValue];
-        
-        RMAnnotation *annotation = [[RMAnnotation alloc] initWithMapView:mapView coordinate:CLLocationCoordinate2DMake(latitude, longitude) andTitle:point[@"name"]];
-        
-        annotation.userInfo = point;
-        
-        [mapView addAnnotation:annotation];
-    }
+        for(NSDictionary *point in results) {
+            
+            CLLocationDegrees latitude = [point[@"latitude"] doubleValue];
+            CLLocationDegrees longitude = [point[@"longitude"] doubleValue];
+            
+            RMAnnotation *annotation = [[RMAnnotation alloc] initWithMapView:mapView coordinate:CLLocationCoordinate2DMake(latitude, longitude) andTitle:point[@"name"]];
+            
+            annotation.userInfo = point;
+            
+            [mapView addAnnotation:annotation];
+        }
+    });
 }
 
 - (RMMapLayer *)mapView:(RMMapView *)map_view layerForAnnotation:(RMAnnotation *)annotation
@@ -59,8 +64,26 @@
     UIImage* icon = [UIImage imageNamed:annotation.userInfo[@"icon"] inBundle:bundle compatibleWithTraitCollection:nil];
 
     RMMarker* marker = [[RMMarker alloc] initWithUIImage:icon];
+    marker.canShowCallout = YES;
+
+    UIButton* rightButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 24, 24)];
+    [rightButton setImage:[UIImage imageNamed:@"next.png"] forState:UIControlStateNormal];
+    marker.rightCalloutAccessoryView = rightButton;
     
     return marker;
 }
 
+-(void)tapOnCalloutAccessoryControl:(UIControl *)control forAnnotation:(RMAnnotation *)annotation onMap:(RMMapView *)map
+{
+    NSLog(@"whi");
+}
+
+-(void)tapOnAnnotation:(RMAnnotation *)annotation onMap:(RMMapView *)map
+{
+    NSLog(@"test");
+}
+
+-(void)test {
+    NSLog(@"label");
+}
 @end

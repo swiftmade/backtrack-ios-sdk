@@ -83,15 +83,19 @@ static BTDatabase *_database;
 
 +(NSString*)localizeDynamicContent:(NSString*)content
 {
+    if(content == nil || [content isEqualToString:@""]) {
+        return @"";
+    }
+    
     NSData * jsonData = [content dataUsingEncoding:NSUTF8StringEncoding];
     NSError * error=nil;
     NSDictionary * parsedData = [NSJSONSerialization JSONObjectWithData:jsonData options:kNilOptions error:&error];
     
-    if(error == nil) {
+    if(error || ! parsedData || ! [parsedData isKindOfClass:[NSDictionary class]]) {
         return @"";
     }
     
-    return (parsedData[[BacktrackSDK language]] == nil) ? parsedData[@"en"] : parsedData[[BacktrackSDK language]];
+    return parsedData[[BacktrackSDK language]] == nil || [parsedData[[BacktrackSDK language]] isEqualToString:@""] ? parsedData[@"en"] : parsedData[[BacktrackSDK language]];
 }
 
 #pragma mark points of interest

@@ -13,5 +13,6 @@
 @property(nonatomic, retain) RMMapView* mapView;
 
 -(id)initWithOfflineMap:(NSString*)mapFile onView:(UIView*)mapContainer;
+-(void)loadInterestingPoints;
 
 @end
