@@ -87,19 +87,36 @@ static BTDatabase *_database;
     NSError * error=nil;
     NSDictionary * parsedData = [NSJSONSerialization JSONObjectWithData:jsonData options:kNilOptions error:&error];
     
+    if(error == nil) {
+        return @"";
+    }
+    
     return (parsedData[[BacktrackSDK language]] == nil) ? parsedData[@"en"] : parsedData[[BacktrackSDK language]];
 }
 
 #pragma mark points of interest
 -(NSArray*)pointsOfInterestWithScope:(NSString *)scope {
+    
+    NSMutableArray* results = [[NSMutableArray alloc] init];
+    
     FMResultSet *s = [_database executeQuery:@"SELECT i.*, t.name as point_type, t.icon FROM interesting_points i, point_types t WHERE i.point_type_id = t.id"];
     
     while([s next]) {
-        //NSLog(@"gotcha %@", [BTDatabase localizeDynamicContent:[s stringForColumn:@"name"]]);
-        NSLog(@"gotcha %@", [s stringForColumn:@"icon"]);
+        
+        NSDictionary* point = @{
+            @"id": [s stringForColumn:@"id"],
+            @"name":  [BTDatabase localizeDynamicContent:[s stringForColumn:@"name"]],
+            @"short_description": [BTDatabase localizeDynamicContent:[s stringForColumn:@"short_description"]],
+            @"long_description": [BTDatabase localizeDynamicContent:[s stringForColumn:@"long_description"]],
+            @"icon": [s stringForColumn:@"icon"],
+            @"latitude": [NSNumber numberWithDouble:[s doubleForColumn:@"latitude"]],
+            @"longitude": [NSNumber numberWithDouble:[s doubleForColumn:@"longitude"]]
+        };
+        
+        [results addObject:point];
     }
     
-    return @[];
+    return results;
 }
 
 -(NSArray*)allPointsOfInterest {
