@@ -248,6 +248,7 @@ NSString* const BTUserKeyForUserDefaults = @"com.backtrack.user";
             if(success && self.clientAccessToken != nil) {
                 [self createUserWithEmail:email password:password first_name:first_name last_name:last_name phone:phone completion:completionHandler];
             } else {
+                completionHandler(NO, error);
                 NSLog(@"Error acquiring client access token: %@", [error localizedDescription]);
             }
         }];
