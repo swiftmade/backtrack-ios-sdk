@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "FMDB.h"
+#import "BacktrackSDK.h"
 
 @interface BTDatabase : NSObject
 {
@@ -18,6 +19,7 @@
 -(void)reopenDatabase;
 
 +(NSString*)bundleFilePath;
++(NSString*)localizeDynamicContent:(NSString*)content;
 
 -(NSArray*)allPointsOfInterest;
 -(NSArray*)pointsOfInterestWithScope:(NSString*)scope;

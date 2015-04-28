@@ -81,12 +81,21 @@ static BTDatabase *_database;
     return filePath;
 }
 
++(NSString*)localizeDynamicContent:(NSString*)content
+{
+    NSData * jsonData = [content dataUsingEncoding:NSUTF8StringEncoding];
+    NSError * error=nil;
+    NSDictionary * parsedData = [NSJSONSerialization JSONObjectWithData:jsonData options:kNilOptions error:&error];
+    
+    return (parsedData[[BacktrackSDK language]] == nil) ? parsedData[@"en"] : parsedData[[BacktrackSDK language]];
+}
+
 #pragma mark points of interest
 -(NSArray*)pointsOfInterestWithScope:(NSString *)scope {
     FMResultSet *s = [_database executeQuery:@"SELECT * FROM interesting_points"];
     
     while([s next]) {
-        //NSLog(@"gotcha");
+        NSLog(@"gotcha %@", [BTDatabase localizeDynamicContent:[s stringForColumn:@"name"]]);
     }
     
     return @[];
