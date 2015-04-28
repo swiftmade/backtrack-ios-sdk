@@ -92,10 +92,11 @@ static BTDatabase *_database;
 
 #pragma mark points of interest
 -(NSArray*)pointsOfInterestWithScope:(NSString *)scope {
-    FMResultSet *s = [_database executeQuery:@"SELECT * FROM interesting_points"];
+    FMResultSet *s = [_database executeQuery:@"SELECT i.*, t.name as point_type, t.icon FROM interesting_points i, point_types t WHERE i.point_type_id = t.id"];
     
     while([s next]) {
-        NSLog(@"gotcha %@", [BTDatabase localizeDynamicContent:[s stringForColumn:@"name"]]);
+        //NSLog(@"gotcha %@", [BTDatabase localizeDynamicContent:[s stringForColumn:@"name"]]);
+        NSLog(@"gotcha %@", [s stringForColumn:@"icon"]);
     }
     
     return @[];
