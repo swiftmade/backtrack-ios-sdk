@@ -99,13 +99,22 @@ static BTDatabase *_database;
 }
 
 #pragma mark points of interest
--(NSArray*)pointsOfInterestWithScope:(NSString *)scope {
+-(NSArray*)pointsOfInterestWithType:(NSString *)type {
     
     NSMutableArray* results = [[NSMutableArray alloc] init];
+    NSString* query = @"SELECT i.*, t.name as point_type, t.icon, p.photo_small_url FROM interesting_points i LEFT JOIN point_types t ON i.point_type_id = t.id LEFT JOIN point_photos p ON p.interesting_point_id = i.id AND p.thumbnail = 1";
     
-    FMResultSet *s = [_database executeQuery:@"SELECT i.*, t.name as point_type, t.icon FROM interesting_points i, point_types t WHERE i.point_type_id = t.id"];
+    FMResultSet *s;
+    
+    if(type != nil) {
+        s = [_database executeQuery:[NSString stringWithFormat:@"%@ WHERE t.icon = ?", query], type];
+    } else {
+        s = [_database executeQuery:query];
+    }
     
     while([s next]) {
+        
+        NSString* thumbnail = [s stringForColumn:@"photo_small_url"] ? [s stringForColumn:@"photo_small_url"] : @"";
         
         NSDictionary* point = @{
             @"id": [s stringForColumn:@"id"],
@@ -114,7 +123,8 @@ static BTDatabase *_database;
             @"long_description": [BTDatabase localizeDynamicContent:[s stringForColumn:@"long_description"]],
             @"icon": [s stringForColumn:@"icon"],
             @"latitude": [NSNumber numberWithDouble:[s doubleForColumn:@"latitude"]],
-            @"longitude": [NSNumber numberWithDouble:[s doubleForColumn:@"longitude"]]
+            @"longitude": [NSNumber numberWithDouble:[s doubleForColumn:@"longitude"]],
+            @"thumbnail": thumbnail
         };
         
         [results addObject:point];
@@ -124,7 +134,10 @@ static BTDatabase *_database;
 }
 
 -(NSArray*)allPointsOfInterest {
-    return [self pointsOfInterestWithScope:nil];
+    return [self pointsOfInterestWithType:nil];
 }
+
+
+
 
 @end

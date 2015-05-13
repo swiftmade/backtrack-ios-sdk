@@ -22,7 +22,7 @@
 +(NSString*)localizeDynamicContent:(NSString*)content;
 
 -(NSArray*)allPointsOfInterest;
--(NSArray*)pointsOfInterestWithScope:(NSString*)scope;
+-(NSArray*)pointsOfInterestWithType:(NSString *)type;
 
 
 @end
