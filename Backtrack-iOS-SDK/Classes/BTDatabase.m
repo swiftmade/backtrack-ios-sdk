@@ -126,7 +126,7 @@ static BTDatabase *_database;
             @"thumbnail": thumbnail,
             @"accommodation": [NSNumber numberWithInt:[s intForColumn:@"accommodation"]],
             @"restaurant": [NSNumber numberWithInt:[s intForColumn:@"restaurant"]],
-            @"public_transport": [NSNumber numberWithInt:[s intForColumn:@"public_transport"]],
+            @"public_transport": [NSNumber numberWithInt:[s intForColumn:@"public_transport"]]
         };
         
         [results addObject:point];
