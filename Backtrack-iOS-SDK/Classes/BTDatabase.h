@@ -23,6 +23,6 @@
 
 -(NSArray*)allPointsOfInterest;
 -(NSArray*)pointsOfInterestWithType:(NSString *)type;
-
+-(NSDictionary*)pointOfInterestById:(NSString*)ID;
 
 @end
