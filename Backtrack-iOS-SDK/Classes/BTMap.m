@@ -64,7 +64,8 @@
 {
     NSString *bundlePath = [[NSBundle mainBundle] pathForResource:@"MakiBundle" ofType:@"bundle"];
     NSBundle *bundle = [NSBundle bundleWithPath:bundlePath];
-    UIImage* icon = [UIImage imageNamed:annotation.userInfo[@"icon"] inBundle:bundle compatibleWithTraitCollection:nil];
+    NSString *iconPath = [bundle pathForResource:(annotation.userInfo[@"icon"] != nil) ? annotation.userInfo[@"icon"] : @"circle" ofType:@"png"];
+    UIImage *icon = [UIImage imageWithContentsOfFile:iconPath];
 
     RMMarker* marker = [[RMMarker alloc] initWithUIImage:icon];
     marker.canShowCallout = YES;
