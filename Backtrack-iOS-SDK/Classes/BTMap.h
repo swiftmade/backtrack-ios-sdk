@@ -15,6 +15,9 @@
 @end
 
 @interface BTMap : NSObject <RMMapViewDelegate>
+{
+    NSDictionary* loadedAnnotations;
+}
 
 @property(nonatomic, retain) RMMapView* mapView;
 // define delegate property
@@ -22,6 +25,6 @@
 
 -(id)initWithOfflineMap:(NSString*)mapFile onView:(UIView*)mapContainer;
 -(void)loadInterestingPoints;
-
+-(void)focusOnPointWithId:(NSString *)ID withZoomLevel:(int)zoom;
 
 @end

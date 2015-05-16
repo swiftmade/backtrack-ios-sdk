@@ -41,7 +41,8 @@
     
     dispatch_async(dispatch_get_main_queue(), ^{
 
-        NSArray *results = [[BTDatabase singleton] allPointsOfInterest];
+        NSArray* results = [[BTDatabase singleton] allPointsOfInterest];
+        NSMutableDictionary* annotations = [[NSMutableDictionary alloc] init];
         
         for(NSDictionary *point in results) {
             
@@ -49,11 +50,13 @@
             CLLocationDegrees longitude = [point[@"longitude"] doubleValue];
             
             RMAnnotation *annotation = [[RMAnnotation alloc] initWithMapView:mapView coordinate:CLLocationCoordinate2DMake(latitude, longitude) andTitle:point[@"name"]];
-            
             annotation.userInfo = point;
             
+            [annotations setObject:annotation forKey:point[@"id"]];
             [mapView addAnnotation:annotation];
         }
+        
+        loadedAnnotations = [NSDictionary dictionaryWithDictionary:annotations];
     });
 }
 
@@ -86,5 +89,20 @@
 
 -(void)test {
     NSLog(@"label");
+}
+
+#pragma mark public calls
+-(void)focusOnPointWithId:(NSString *)ID withZoomLevel:(int)zoom {
+
+    if(loadedAnnotations == nil || [loadedAnnotations objectForKey:ID] == nil) {
+        return;
+    }
+    
+    RMAnnotation* targetAnnotation = (RMAnnotation*)[loadedAnnotations objectForKey:ID];
+    
+    [self.mapView setZoom:zoom animated:NO];
+    [self.mapView setCenterCoordinate:targetAnnotation.coordinate animated:NO];
+    [self.mapView selectAnnotation:targetAnnotation animated:YES];
+
 }
 @end
