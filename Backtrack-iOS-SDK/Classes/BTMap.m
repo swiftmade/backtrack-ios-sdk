@@ -8,7 +8,7 @@
 #import "BTMap.h"
 
 @implementation BTMap
-@synthesize mapView;
+@synthesize mapView, delegate;
 
 -(id)init {
     // no need for an access token, we are completely offline
@@ -73,9 +73,10 @@
     return marker;
 }
 
--(void)tapOnCalloutAccessoryControl:(UIControl *)control forAnnotation:(RMAnnotation *)annotation onMap:(RMMapView *)map
-{
-    NSLog(@"whi");
+-(void)tapOnCalloutAccessoryControl:(UIControl *)control forAnnotation:(RMAnnotation *)annotation onMap:(RMMapView *)map {
+    if([self.delegate respondsToSelector:@selector(goToPointOfInterest:)]) {
+        [delegate goToPointOfInterest:annotation.userInfo[@"id"]];
+    }
 }
 
 -(void)tapOnAnnotation:(RMAnnotation *)annotation onMap:(RMMapView *)map
