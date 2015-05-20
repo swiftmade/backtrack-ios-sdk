@@ -114,22 +114,26 @@ static BTDatabase *_database;
     
     while([s next]) {
         
-        NSString* thumbnail = [s stringForColumn:@"photo_small_url"] ? [s stringForColumn:@"photo_small_url"] : @"";
+        NSMutableDictionary* object = [[NSMutableDictionary alloc] init];
         
-        NSDictionary* point = @{
+        [object setValuesForKeysWithDictionary:@{
             @"id": [s stringForColumn:@"id"],
             @"name":  [BTDatabase localizeDynamicContent:[s stringForColumn:@"name"]],
             @"short_description": [BTDatabase localizeDynamicContent:[s stringForColumn:@"short_description"]],
             @"icon": [s stringForColumn:@"icon"],
             @"latitude": [NSNumber numberWithDouble:[s doubleForColumn:@"latitude"]],
             @"longitude": [NSNumber numberWithDouble:[s doubleForColumn:@"longitude"]],
-            @"thumbnail": thumbnail,
             @"accommodation": [NSNumber numberWithInt:[s intForColumn:@"accommodation"]],
             @"restaurant": [NSNumber numberWithInt:[s intForColumn:@"restaurant"]],
-            @"public_transport": [NSNumber numberWithInt:[s intForColumn:@"public_transport"]]
-        };
+            @"public_transport": [NSNumber numberWithInt:[s intForColumn:@"public_transport"]],
+        }];
         
-        [results addObject:point];
+        if([s stringForColumn:@"photo_small_url"]) {
+            [object setObject:[[BacktrackClient sharedClient] authenticatedURL:[s stringForColumn:@"photo_small_url"]] forKey:@"thumbnail"];
+        }
+        
+        
+        [results addObject:object];
     }
     
     return results;
@@ -144,10 +148,9 @@ static BTDatabase *_database;
     FMResultSet* s = [_database executeQuery:@"SELECT i.*, t.name as point_type, t.icon, p.photo_small_url FROM interesting_points i LEFT JOIN point_types t ON i.point_type_id = t.id LEFT JOIN point_photos p ON p.interesting_point_id = i.id AND p.thumbnail = 1 WHERE i.id = ?", ID];
     
     if([s next]) {
+        NSMutableDictionary* object = [[NSMutableDictionary alloc] init];
         
-        NSString* thumbnail = [s stringForColumn:@"photo_small_url"] ? [s stringForColumn:@"photo_small_url"] : @"";
-        
-        return @{
+        [object setValuesForKeysWithDictionary:@{
             @"id": [s stringForColumn:@"id"],
             @"name":  [BTDatabase localizeDynamicContent:[s stringForColumn:@"name"]],
             @"short_description": [BTDatabase localizeDynamicContent:[s stringForColumn:@"short_description"]],
@@ -155,11 +158,16 @@ static BTDatabase *_database;
             @"icon": [s stringForColumn:@"icon"],
             @"latitude": [NSNumber numberWithDouble:[s doubleForColumn:@"latitude"]],
             @"longitude": [NSNumber numberWithDouble:[s doubleForColumn:@"longitude"]],
-            @"thumbnail": thumbnail,
             @"accommodation": [NSNumber numberWithInt:[s intForColumn:@"accommodation"]],
             @"restaurant": [NSNumber numberWithInt:[s intForColumn:@"restaurant"]],
             @"public_transport": [NSNumber numberWithInt:[s intForColumn:@"public_transport"]],
-        };
+            }];
+        
+        if([s stringForColumn:@"photo_small_url"]) {
+            [object setObject:[[BacktrackClient sharedClient] authenticatedURL:[s stringForColumn:@"photo_small_url"]] forKey:@"thumbnail"];
+        }
+        
+        return object;
     }
     
     return nil;
@@ -172,7 +180,7 @@ static BTDatabase *_database;
     FMResultSet* set = [_database executeQuery:@"SELECT photo_full_url FROM point_photos WHERE interesting_point_id = ? ORDER BY 'order' ASC", ID];
     
     while([set next]) {
-        [results addObject:[set stringForColumn:@"photo_full_url"]];
+        [results addObject:[[BacktrackClient sharedClient] authenticatedURL:[set stringForColumn:@"photo_full_url"]]];
     }
     
     return (NSArray*)results;

@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "FMDB.h"
 #import "BacktrackSDK.h"
+#import "BacktrackClient.h"
 
 @interface BTDatabase : NSObject
 {
