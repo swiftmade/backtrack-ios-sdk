@@ -20,9 +20,10 @@
 
 +(NSString*)bundleFilePath;
 +(NSString*)localizeDynamicContent:(NSString*)content;
-
+// points of interest
 -(NSArray*)allPointsOfInterest;
 -(NSArray*)pointsOfInterestWithType:(NSString *)type;
 -(NSDictionary*)pointOfInterestById:(NSString*)ID;
-
+// photos
+-(NSArray*)photosForPointOfInterest:(NSString*)ID;
 @end

@@ -165,6 +165,18 @@ static BTDatabase *_database;
     return nil;
 }
 
+#pragma mark point photos
+-(NSArray*)photosForPointOfInterest:(NSString*)ID {
+    NSMutableArray* results = [[NSMutableArray alloc] init];
+    
+    FMResultSet* set = [_database executeQuery:@"SELECT photo_full_url FROM point_photos WHERE interesting_point_id = ? ORDER BY 'order' ASC", ID];
+    
+    while([set next]) {
+        [results addObject:[set stringForColumn:@"photo_full_url"]];
+    }
+    
+    return (NSArray*)results;
+}
 
 
 @end
