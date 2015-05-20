@@ -73,4 +73,8 @@
         parameters:(NSDictionary *)parameters
            success:(void (^)(id responseObject))success
            failure:(void (^)(NSError *error))failure;
+
+// Helpers
+-(NSURL*)authenticatedURL:(NSString*)urlString;
+
 @end

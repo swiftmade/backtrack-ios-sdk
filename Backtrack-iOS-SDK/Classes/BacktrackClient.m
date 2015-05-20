@@ -411,6 +411,16 @@ NSString* const BTUserKeyForUserDefaults = @"com.backtrack.user";
     return mutableRequest;
 }
 
+-(NSURL*)authenticatedURL:(NSString*)urlString {
+    
+    if (![self.currentUser.authenticationToken length]) {
+        return [NSURL URLWithString:urlString];
+    }
+    
+    return [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@", urlString,
+                                 [urlString rangeOfString:@"?"].length > 0 ? @"&access_token=" : @"?access_token=", self.currentUser.authenticationToken]];
+}
+
 #pragma mark - Client methods
 
 - (void)getPath:(NSString *)path
