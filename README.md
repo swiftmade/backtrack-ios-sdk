@@ -12,10 +12,10 @@ To run the example project, clone the repo, and run `pod install` from the Examp
 In order to use this SDK, you will need a client access key and secret. The SDK can be integrated for:
 
 - [x] Login capabilities (registration, etc)
-- [ ] Multilingual capabilities
+- [x] Multilingual capabilities
 - [ ] Access to your application database
-- [x] Checking & downloading updates
-- [ ] Caching files (photos, videos, etc)
+- [x] Checking & downloading updates- 
+- [ ] ~~Caching files (photos, videos, etc)~~
 - [ ] Using pre-calculated data from Backtrack to offer point-to-point navigation
 
 ## Dependencies
