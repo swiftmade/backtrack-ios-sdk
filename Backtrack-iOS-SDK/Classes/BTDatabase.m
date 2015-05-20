@@ -186,5 +186,34 @@ static BTDatabase *_database;
     return (NSArray*)results;
 }
 
+-(NSArray*)flowersByMonth:(bool)byMonth andAltitude:(int)altitude {
+    
+    NSMutableArray* results = [[NSMutableArray alloc] init];
+    
+    NSUInteger flowering_low = 1;
+    NSUInteger flowering_high = 12;
 
+    if(byMonth) {
+        NSDate *currentDate = [NSDate date];
+        NSCalendar* calendar = [NSCalendar currentCalendar];
+        NSDateComponents* components = [calendar components:NSYearCalendarUnit|NSMonthCalendarUnit|NSDayCalendarUnit fromDate:currentDate]; // Get necessary date components
+        
+        flowering_low = [components month];
+        flowering_high = [components month];
+    }
+    
+    FMResultSet* set = [_database executeQuery:@"SELECT * FROM flowers WHERE flowering_low <= ? AND flowering_high >= ? ORDER BY latin_name ASC", [NSString stringWithFormat:@"%d", flowering_high], [NSString stringWithFormat:@"%d", flowering_low]];
+    
+    while([set next]) {
+        [results addObject:@{
+            @"id": [set stringForColumn:@"id"],
+            @"latin_name": [set stringForColumn:@"latin_name"],
+            @"common_name": [BTDatabase localizeDynamicContent:[set stringForColumn:@"common_name"]],
+            @"family": [set stringForColumn:@"family"],
+            @"height": [set stringForColumn:@"height"]
+        }];
+    }
+    
+    return results;
+}
 @end
