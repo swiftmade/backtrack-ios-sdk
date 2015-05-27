@@ -55,7 +55,7 @@ NSString* const BTBundleVersionKeyForUserDefaults = @"com.backtrack.bundle_versi
     NSString *url     = [bundleInfo objectAtIndex:1];
 
     // temporary file
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
     NSString *filePath = [[paths objectAtIndex:0] stringByAppendingPathComponent:@"bundleDownload"];
     
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:url]];
@@ -65,16 +65,18 @@ NSString* const BTBundleVersionKeyForUserDefaults = @"com.backtrack.bundle_versi
     
     if(progressBlock) {
         [operation setDownloadProgressBlock:progressBlock];
+    
     }
     
     [operation setCompletionBlock:^{
-        
+        // get database path
+        NSString* bundleFilePath = [BTDatabase bundleFilePath];
         // remove old database file
-        if([[NSFileManager defaultManager] fileExistsAtPath:[BTDatabase bundleFilePath]]) {
-            [[NSFileManager defaultManager] removeItemAtPath:[BTDatabase bundleFilePath] error:nil];
+        if([[NSFileManager defaultManager] fileExistsAtPath:bundleFilePath]) {
+            [[NSFileManager defaultManager] removeItemAtPath:bundleFilePath error:nil];
         }
         // move the new one
-        [[NSFileManager defaultManager] moveItemAtPath:filePath toPath:[BTDatabase bundleFilePath] error:nil];
+        [[NSFileManager defaultManager] moveItemAtPath:filePath toPath:bundleFilePath error:nil];
         // write version to disk
         [BacktrackBundle setLocalVersion:[version intValue]];
         // re-open database
@@ -86,5 +88,22 @@ NSString* const BTBundleVersionKeyForUserDefaults = @"com.backtrack.bundle_versi
     }];
 
     [operation start];
+}
+
++(void)updateApplication:(BTDownloadProgressBlock)progressBlock completionHandler:(BTBooleanResultBlock)completionBlock
+{
+    [BacktrackBundle checkForUpdates:^(id object, NSError *error) {
+        if(object == nil && error == nil) {
+            // no updates available
+            completionBlock(NO, nil);
+        } else if(object == nil && error != nil) {
+            // error occured checking for updates
+            completionBlock(NO, error);
+        } else {
+            [BacktrackBundle downloadBundle:object progress:progressBlock completionHandler:^{
+                completionBlock(YES, nil);
+            }];
+        }
+    }];
 }
 @end

@@ -72,8 +72,9 @@ static BTDatabase *_database;
     if( ! [[NSFileManager defaultManager] fileExistsAtPath:filePath]) {
         NSString *sourcePath = [[NSBundle mainBundle] pathForResource:@"BacktrackDataBundle" ofType:@"sqlite"];
         
-        if([[NSFileManager defaultManager] fileExistsAtPath:sourcePath]) {
+        if( ! [[NSFileManager defaultManager] fileExistsAtPath:sourcePath]) {
             NSLog(@"Important Warning: Please include a BacktrackDataBundle.sqlite in your main bundle");
+        } else {
             [[NSFileManager defaultManager] copyItemAtPath:sourcePath toPath:filePath error:nil];
         }
     }

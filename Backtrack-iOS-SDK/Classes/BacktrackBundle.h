@@ -18,5 +18,6 @@
 
 + (void)checkForUpdates:(BTObjectResultBlock)completionBlock;
 + (void)downloadBundle:(NSArray*)bundleInfo progress:(BTDownloadProgressBlock)progressBlock completionHandler:(BTVoidBlock)completionBlock;
++ (void)updateApplication:(BTDownloadProgressBlock)progressBlock completionHandler:(BTBooleanResultBlock)completionBlock;
 
 @end
