@@ -40,7 +40,7 @@ NSString* const BTBundleVersionKeyForUserDefaults = @"com.backtrack.bundle_versi
             completionBlock(@[responseObject[@"data"][@"id"], responseObject[@"data"][@"url"]], nil);
         } else {
             // no update
-            completionBlock(nil, nil);
+            completionBlock(nil, [NSError errorWithDomain:@"backtrack-sdk.download" code:401 userInfo:nil]);
         }
         
     } failure:^(NSError *error) {
@@ -49,7 +49,7 @@ NSString* const BTBundleVersionKeyForUserDefaults = @"com.backtrack.bundle_versi
 }
 
 // bundle info is an array: 0 -> bundle id, 1 -> bundle url
-+ (void)downloadBundle:(NSArray*)bundleInfo progress:(BTDownloadProgressBlock)progressBlock completionHandler:(BTVoidBlock)completionBlock
++ (void)downloadBundle:(NSArray*)bundleInfo progress:(BTDownloadProgressBlock)progressBlock completionHandler:(BTBooleanResultBlock)completionBlock
 {
     NSNumber *version = (NSNumber*)[bundleInfo objectAtIndex:0];
     NSString *url     = [bundleInfo objectAtIndex:1];
@@ -65,10 +65,15 @@ NSString* const BTBundleVersionKeyForUserDefaults = @"com.backtrack.bundle_versi
     
     if(progressBlock) {
         [operation setDownloadProgressBlock:progressBlock];
-    
     }
     
     [operation setCompletionBlock:^{
+        
+        if( ! [[[NSFileManager defaultManager] attributesOfItemAtPath:filePath error:nil] fileSize]) {
+            completionBlock(NO, [NSError errorWithDomain:@"backtrack-sdk.download" code:501 userInfo:nil]);
+            return;
+        }
+        
         // get database path
         NSString* bundleFilePath = [BTDatabase bundleFilePath];
         // remove old database file
@@ -83,7 +88,7 @@ NSString* const BTBundleVersionKeyForUserDefaults = @"com.backtrack.bundle_versi
         [[BTDatabase singleton] reopenDatabase];
         
         if(completionBlock) {
-            completionBlock();
+            completionBlock(YES, nil);
         }
     }];
 
@@ -93,15 +98,12 @@ NSString* const BTBundleVersionKeyForUserDefaults = @"com.backtrack.bundle_versi
 +(void)updateApplication:(BTDownloadProgressBlock)progressBlock completionHandler:(BTBooleanResultBlock)completionBlock
 {
     [BacktrackBundle checkForUpdates:^(id object, NSError *error) {
-        if(object == nil && error == nil) {
-            // no updates available
-            completionBlock(NO, nil);
-        } else if(object == nil && error != nil) {
+        if(object == nil) {
             // error occured checking for updates
             completionBlock(NO, error);
         } else {
-            [BacktrackBundle downloadBundle:object progress:progressBlock completionHandler:^{
-                completionBlock(YES, nil);
+            [BacktrackBundle downloadBundle:object progress:progressBlock completionHandler:^(BOOL success, NSError *error) {
+                completionBlock(success, error);
             }];
         }
     }];

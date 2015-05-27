@@ -228,4 +228,16 @@ static BTDatabase *_database;
     }
 }
 
+-(NSArray*)allPhotos {
+    NSMutableArray* photos = [[NSMutableArray alloc] init];
+    FMResultSet* set = [_database executeQuery:@"SELECT photo_full_url, photo_small_url FROM point_photos"];
+    
+    while([set next]) {
+        [photos addObject:[[BacktrackClient sharedClient] authenticatedURL:[set stringForColumn:@"photo_full_url"]]];
+        [photos addObject:[[BacktrackClient sharedClient] authenticatedURL:[set stringForColumn:@"photo_small_url"]]];
+    }
+    
+    return photos;
+}
+
 @end
