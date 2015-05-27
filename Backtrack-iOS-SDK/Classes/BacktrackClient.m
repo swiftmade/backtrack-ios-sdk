@@ -151,6 +151,7 @@ NSString* const BTUserKeyForUserDefaults = @"com.backtrack.user";
                               @"User-Agent": [NSString stringWithFormat:@"Backtrack iOS SDK %@", VERSION]
                               };
     sessionConfiguration.HTTPAdditionalHeaders = headers;
+    [sessionConfiguration setTimeoutIntervalForRequest:30]; // 30 seconds timeout
     _session = [NSURLSession sessionWithConfiguration:sessionConfiguration
                                              delegate:nil
                                         delegateQueue:[NSOperationQueue mainQueue]];
