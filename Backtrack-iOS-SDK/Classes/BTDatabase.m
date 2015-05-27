@@ -217,4 +217,15 @@ static BTDatabase *_database;
     
     return results;
 }
+
+-(NSString*)totalFilesizeOfPhotos {
+    FMResultSet* set = [_database executeQuery:@"SELECT SUM(photo_file_size) as sum FROM point_photos"];
+    if([set next]) {
+        int size = [set intForColumn:@"sum"] / 1024 / 1024;
+        return [NSString stringWithFormat:@"%d mb", size];
+    } else {
+        return @"n/a";
+    }
+}
+
 @end

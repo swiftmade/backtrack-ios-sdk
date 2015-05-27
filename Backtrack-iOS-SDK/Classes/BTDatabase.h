@@ -27,6 +27,7 @@
 -(NSDictionary*)pointOfInterestById:(NSString*)ID;
 // photos
 -(NSArray*)photosForPointOfInterest:(NSString*)ID;
+-(NSString*)totalFilesizeOfPhotos;
 // flowers
 -(NSArray*)flowersByMonth:(bool)byMonth andAltitude:(int)altitude;
 @end
