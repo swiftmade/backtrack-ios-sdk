@@ -45,6 +45,7 @@
 - (BOOL) isAuthenticated;
 
 - (void) logoutWithCompletion:(BTBooleanResultBlock)completionBlock;
+- (void) forceLogout; // logout without API request
 
 // User
 - (void) updateUserWithCompletion:(BTObjectResultBlock)completionBlock;

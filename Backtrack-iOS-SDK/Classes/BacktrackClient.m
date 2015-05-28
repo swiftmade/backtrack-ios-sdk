@@ -286,8 +286,7 @@ NSString* const BTUserKeyForUserDefaults = @"com.backtrack.user";
            success:^(id responseObject) {
                
                if (completionHandler) {
-                   self.currentUser = nil;
-                   [self saveUserToDisk:self.currentUser];
+                   [self forceLogout];
                    completionHandler(YES, nil);
                }
                
@@ -299,6 +298,11 @@ NSString* const BTUserKeyForUserDefaults = @"com.backtrack.user";
                
            }];
     
+}
+
+- (void) forceLogout {
+    self.currentUser = nil;
+    [self saveUserToDisk:self.currentUser];
 }
 
 
