@@ -25,9 +25,9 @@
     [userDefaults synchronize];
 }
 
-+(NSString*)baseURL {
++(NSURL*)baseURL {
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-    return (NSString *) [userDefaults objectForKey:API_BASE_URL_KEY];
+    return [NSURL URLWithString:[userDefaults objectForKey:API_BASE_URL_KEY]];
 }
 
 +(NSString*)clientID {

@@ -22,10 +22,6 @@
 
 @property (nonatomic, strong) BacktrackUser *currentUser;
 @property (nonatomic, strong) NSURLSession *session;
-
-@property (nonatomic, copy) NSURL *baseURL;
-@property (nonatomic, copy) NSString *clientID;
-@property (nonatomic, copy) NSString *clientSecret;
 @property (nonatomic, copy) NSString *clientAccessToken;
 
 + (instancetype)sharedClient;

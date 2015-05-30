@@ -18,7 +18,7 @@
 + (void) setClientID:(NSString*)clientId clientSecret:(NSString*)clientSecret;
 + (void) setBaseURL: (NSString*)baseURL;
 
-+ (NSString *) baseURL;
++ (NSURL *) baseURL;
 + (NSString *) clientID;
 + (NSString *) clientSecret;
 + (NSString *) errorDomain;

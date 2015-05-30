@@ -133,10 +133,6 @@ NSString* const BTUserKeyForUserDefaults = @"com.backtrack.user";
 - (id) init {
     
     if (self = [super init]) {
-        
-        _baseURL = [NSURL URLWithString:[BacktrackSDK baseURL]];
-        _clientID = [BacktrackSDK clientID];
-        _clientSecret = [BacktrackSDK clientSecret];
         [self _initSession];
     }
     
@@ -160,10 +156,11 @@ NSString* const BTUserKeyForUserDefaults = @"com.backtrack.user";
 #pragma mark - Authentication
 
 - (void)authenticateClient:(BTBooleanResultBlock)completionHandler {
+
     [self postPath:@"authenticate"
         parameters:@{
-                     @"client_id": self.clientID,
-                     @"client_secret": self.clientSecret,
+                     @"client_id": [BacktrackSDK clientID],
+                     @"client_secret": [BacktrackSDK clientSecret],
                      @"grant_type": @"client_credentials"
                      }
            success:^(NSDictionary *responseObject) {
@@ -197,8 +194,8 @@ NSString* const BTUserKeyForUserDefaults = @"com.backtrack.user";
         parameters:@{
                      @"email": email,
                      @"password": password,
-                     @"client_id": self.clientID,
-                     @"client_secret": self.clientSecret,
+                     @"client_id": [BacktrackSDK clientID],
+                     @"client_secret": [BacktrackSDK clientSecret],
                      @"grant_type": @"backtrack"
                     }
            success:^(NSDictionary *responseObject) {
@@ -206,8 +203,6 @@ NSString* const BTUserKeyForUserDefaults = @"com.backtrack.user";
                NSString *token = responseObject[@"access_token"];
                
                if (token) {
-                   
-                   NSLog(@"user data: %@", responseObject[@"data"]);
                    BacktrackUser *user = [[BacktrackUser alloc] initWithDictionary:responseObject[@"data"]];
                    user.authenticationToken = token;
                    self.currentUser = user;
@@ -362,8 +357,7 @@ NSString* const BTUserKeyForUserDefaults = @"com.backtrack.user";
                                   URLString:(NSString *)path
                                  parameters:(NSDictionary *)parameters {
     
-    NSString *u = [[NSURL URLWithString:path relativeToURL:self.baseURL] absoluteString];
-    NSURL *url = [NSURL URLWithString:u];
+    NSURL *url = [NSURL URLWithString:path relativeToURL:[BacktrackSDK baseURL]];
     BTMutableURLRequest *request = [[BTMutableURLRequest alloc] initWithURL:url];
     
     if ([method isEqualToString:@"POST"]) {
