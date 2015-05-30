@@ -116,12 +116,14 @@ static BTDatabase *_database;
     while([s next]) {
         
         NSMutableDictionary* object = [[NSMutableDictionary alloc] init];
+        CLLocation *location = [[CLLocation alloc] initWithLatitude:[s doubleForColumn:@"longitude"] longitude:[s doubleForColumn:@"longitude"]];
         
         [object setValuesForKeysWithDictionary:@{
             @"id": [s stringForColumn:@"id"],
             @"name":  [BTDatabase localizeDynamicContent:[s stringForColumn:@"name"]],
             @"short_description": [BTDatabase localizeDynamicContent:[s stringForColumn:@"short_description"]],
             @"icon": [s stringForColumn:@"icon"],
+            @"location": location,
             @"latitude": [NSNumber numberWithDouble:[s doubleForColumn:@"latitude"]],
             @"longitude": [NSNumber numberWithDouble:[s doubleForColumn:@"longitude"]],
             @"accommodation": [NSNumber numberWithInt:[s intForColumn:@"accommodation"]],
@@ -150,6 +152,7 @@ static BTDatabase *_database;
     
     if([s next]) {
         NSMutableDictionary* object = [[NSMutableDictionary alloc] init];
+        CLLocation *location = [[CLLocation alloc] initWithLatitude:[s doubleForColumn:@"longitude"] longitude:[s doubleForColumn:@"longitude"]];
         
         [object setValuesForKeysWithDictionary:@{
             @"id": [s stringForColumn:@"id"],
@@ -157,6 +160,7 @@ static BTDatabase *_database;
             @"short_description": [BTDatabase localizeDynamicContent:[s stringForColumn:@"short_description"]],
             @"long_description": [BTDatabase localizeDynamicContent:[s stringForColumn:@"long_description"]],            
             @"icon": [s stringForColumn:@"icon"],
+            @"location": location,
             @"latitude": [NSNumber numberWithDouble:[s doubleForColumn:@"latitude"]],
             @"longitude": [NSNumber numberWithDouble:[s doubleForColumn:@"longitude"]],
             @"accommodation": [NSNumber numberWithInt:[s intForColumn:@"accommodation"]],
