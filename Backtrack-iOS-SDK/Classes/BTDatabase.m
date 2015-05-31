@@ -62,7 +62,7 @@ static BTDatabase *_database;
     [self openDatabase];
 }
 
-
+#pragma mark helpers
 +(NSString*)bundleFilePath {
 
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
@@ -97,6 +97,24 @@ static BTDatabase *_database;
     }
     
     return parsedData[[BacktrackSDK language]] == nil || [parsedData[[BacktrackSDK language]] isEqualToString:@""] ? parsedData[@"en"] : parsedData[[BacktrackSDK language]];
+}
+
++(NSArray*)resultsSortedByProximity:(NSArray*)results location:(CLLocation*)location
+{
+    if(location == nil) {
+        return results;
+    }
+    
+    NSMutableArray *sorted = [results mutableCopy];
+
+    [sorted sortUsingComparator:^(NSDictionary* obj1, NSDictionary* obj2) {
+         NSNumber *distance_1 = [NSNumber numberWithFloat:[[obj1 objectForKey:@"location"] distanceFromLocation:location]];
+         NSNumber *distance_2 = [NSNumber numberWithFloat:[[obj2 objectForKey:@"location"] distanceFromLocation:location]];
+         
+         return [distance_1 compare:distance_2];
+     }];
+
+    return (NSArray*)sorted;
 }
 
 #pragma mark points of interest
@@ -242,6 +260,74 @@ static BTDatabase *_database;
     }
     
     return photos;
+}
+
+#pragma mark trip points
+-(NSArray*)tripPointsAnnotatedFor:(CLLocation*)userLocation {
+    NSMutableArray* results = [[NSMutableArray alloc] init];
+    FMResultSet *set = [_database executeQuery:@"SELECT * FROM trip_points ORDER BY name"];
+    
+    while([set next]) {
+        NSMutableDictionary* object = [[NSMutableDictionary alloc] init];
+
+        CLLocation *location = [[CLLocation alloc] initWithLatitude:[set doubleForColumn:@"latitude"] longitude:[set doubleForColumn:@"longitude"]];
+        [object setObject:location forKey:@"location"];
+        
+        if(userLocation != nil) {
+            [object setObject:[NSNumber numberWithInt:(int)[location distanceFromLocation:userLocation]] forKey:@"distance"];
+        }
+        
+        [object setValuesForKeysWithDictionary:@{
+            @"id": [set stringForColumn:@"id"],
+            @"name": [BTDatabase localizeDynamicContent:[set stringForColumn:@"name"]],
+            @"description": [BTDatabase localizeDynamicContent:[set stringForColumn:@"description"]],
+            @"latitude": [NSNumber numberWithDouble:[set doubleForColumn:@"latitude"]],
+            @"longitude": [NSNumber numberWithDouble:[set doubleForColumn:@"longitude"]],
+            @"altitude": [NSNumber numberWithInt:[set doubleForColumn:@"altitude"]],
+        }];
+        
+        [results addObject:object];
+    }
+    
+    return results;
+}
+
+-(NSArray*)allTripPoints {
+    return [self tripPointsAnnotatedFor:nil];
+}
+
+-(NSArray*)possibleDestinationPoints:(NSString*)departurePoint annotatedFor:(CLLocation*)userLocation {
+    
+    NSMutableArray* results = [[NSMutableArray alloc] init];
+    FMResultSet *set = [_database executeQuery:@"SELECT t.* FROM trip_points t, path_guides p WHERE p.from_point_id = ? AND t.id = p.to_point_id ORDER BY t.name", departurePoint];
+    
+    while([set next]) {
+        NSMutableDictionary* object = [[NSMutableDictionary alloc] init];
+        
+        CLLocation *location = [[CLLocation alloc] initWithLatitude:[set doubleForColumn:@"latitude"] longitude:[set doubleForColumn:@"longitude"]];
+        [object setObject:location forKey:@"location"];
+        
+        if(userLocation != nil) {
+            [object setObject:[NSNumber numberWithInt:(int)[location distanceFromLocation:userLocation]] forKey:@"distance"];
+        }
+        
+        [object setValuesForKeysWithDictionary:@{
+            @"id": [set stringForColumn:@"id"],
+            @"name": [BTDatabase localizeDynamicContent:[set stringForColumn:@"name"]],
+            @"description": [BTDatabase localizeDynamicContent:[set stringForColumn:@"description"]],
+            @"latitude": [NSNumber numberWithDouble:[set doubleForColumn:@"latitude"]],
+            @"longitude": [NSNumber numberWithDouble:[set doubleForColumn:@"longitude"]],
+            @"altitude": [NSNumber numberWithInt:[set doubleForColumn:@"altitude"]],
+        }];
+        
+        [results addObject:object];
+    }
+    
+    return results;
+}
+
+-(NSArray*)possibleDestinationPoints:(NSString*)departurePoint {
+    return [self possibleDestinationPoints:departurePoint annotatedFor:nil];
 }
 
 @end

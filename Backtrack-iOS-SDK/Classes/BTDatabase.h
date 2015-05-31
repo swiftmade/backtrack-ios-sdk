@@ -20,8 +20,10 @@
 +(BTDatabase*)singleton;
 -(void)reopenDatabase;
 
+// helpers
 +(NSString*)bundleFilePath;
 +(NSString*)localizeDynamicContent:(NSString*)content;
++(NSArray*)resultsSortedByProximity:(NSArray*)results location:(CLLocation*)location;
 // points of interest
 -(NSArray*)allPointsOfInterest;
 -(NSArray*)pointsOfInterestWithType:(NSString *)type;
@@ -32,4 +34,9 @@
 -(NSArray*)allPhotos;
 // flowers
 -(NSArray*)flowersByMonth:(bool)byMonth andAltitude:(int)altitude;
+// trip points
+-(NSArray*)tripPointsAnnotatedFor:(CLLocation*)userLocation;
+-(NSArray*)allTripPoints;
+-(NSArray*)possibleDestinationPoints:(NSString*)departurePoint annotatedFor:(CLLocation*)userLocation;
+-(NSArray*)possibleDestinationPoints:(NSString*)departurePoint;
 @end
