@@ -330,9 +330,9 @@ static BTDatabase *_database;
     return [self possibleDestinationPoints:departurePoint annotatedFor:nil];
 }
 
+#pragma mark Routes
 -(NSDictionary*)routesBetween:(NSString*)fromPointID to:(NSString*)toPointID {
-    
-    NSMutableArray* results = [[NSMutableArray alloc] init];
+
     FMResultSet *set = [_database executeQuery:@"SELECT routes, distances FROM path_guides WHERE from_point_id = ? AND to_point_id = ?", fromPointID, toPointID];
     
     if([set next]) {
@@ -348,4 +348,25 @@ static BTDatabase *_database;
     
     return nil;
 }
+
+-(NSDictionary*)waypointsForRoute:(NSString*)routeID {
+    NSMutableArray *waypoints = [[NSMutableArray alloc] init];
+    FMResultSet *set = [_database executeQuery:@"SELECT r.waypoints, r.length, t.name FROM routes r, trip_points t WHERE r.id = ? AND r.to_point_id = t.id", routeID];
+    
+    if([set next]) {
+        NSData *waypointData = [[set stringForColumn:@"waypoints"] dataUsingEncoding:NSUTF8StringEncoding];
+        NSArray *rawWaypoints = [NSJSONSerialization JSONObjectWithData:waypointData options:kNilOptions error:nil];
+        
+        for(NSArray *waypoint in rawWaypoints) {
+            CLLocation *location = [[CLLocation alloc] initWithLatitude:[[waypoint objectAtIndex:0] floatValue]  longitude:[[waypoint objectAtIndex:1] floatValue]];
+            
+            [waypoints addObject:location];
+        }
+        
+        return @{@"name":[BTDatabase localizeDynamicContent:[set stringForColumn:@"name"]], @"waypoints": waypoints, @"length":[set stringForColumn:@"length"]};
+    }
+    
+    return nil;
+}
+
 @end

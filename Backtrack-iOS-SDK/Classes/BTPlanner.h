@@ -7,10 +7,18 @@
 //
 
 #import "BTDatabase.h"
+#import <CoreLocation/CoreLocation.h>
 
 @interface BTPlanner : NSObject
+{
+    NSMutableArray* waypoints;
+    NSUInteger totalLength;
+    
+    BOOL inFork;
+    NSMutableArray* forks;
+    NSUInteger currentForkIndex;
+}
 
-
--(void)planTripFrom:(NSString*)fromPointID toPoint:(NSString*)toPointID forkBlock:(BTTripForkBlock)forkHandler completionBlock:(BTObjectResultBlock)completionHandler;
+-(NSArray*)getForksInRoute:(NSString*)fromPointID toPoint:(NSString*)toPointID;
 
 @end
