@@ -330,4 +330,22 @@ static BTDatabase *_database;
     return [self possibleDestinationPoints:departurePoint annotatedFor:nil];
 }
 
+-(NSDictionary*)routesBetween:(NSString*)fromPointID to:(NSString*)toPointID {
+    
+    NSMutableArray* results = [[NSMutableArray alloc] init];
+    FMResultSet *set = [_database executeQuery:@"SELECT routes, distances FROM path_guides WHERE from_point_id = ? AND to_point_id = ?", fromPointID, toPointID];
+    
+    if([set next]) {
+        
+        NSData *routeData = [[set stringForColumn:@"routes"] dataUsingEncoding:NSUTF8StringEncoding];
+        NSData *distanceData = [[set stringForColumn:@"distances"] dataUsingEncoding:NSUTF8StringEncoding];
+        
+        return @{
+            @"routes": [NSJSONSerialization JSONObjectWithData:routeData options:kNilOptions error:nil],
+            @"distances": [NSJSONSerialization JSONObjectWithData:distanceData options:kNilOptions error:nil],
+        };
+    }
+    
+    return nil;
+}
 @end

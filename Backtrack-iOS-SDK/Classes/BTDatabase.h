@@ -39,4 +39,5 @@
 -(NSArray*)allTripPoints;
 -(NSArray*)possibleDestinationPoints:(NSString*)departurePoint annotatedFor:(CLLocation*)userLocation;
 -(NSArray*)possibleDestinationPoints:(NSString*)departurePoint;
+-(NSDictionary*)routesBetween:(NSString*)fromPointID to:(NSString*)toPointID;;
 @end
