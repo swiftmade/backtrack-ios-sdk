@@ -7,7 +7,9 @@
 //
 
 #import "BTDatabase.h"
+#import "NSString+Distance.h"
 #import <CoreLocation/CoreLocation.h>
+
 
 @class BTPlanner;
 

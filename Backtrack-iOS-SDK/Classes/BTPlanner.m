@@ -92,6 +92,14 @@
     [subPlanner initializeWithRoutes:fork[@"routes"] andDistances:fork[@"distances"]];
 }
 
+/**
+ * Planned trip: (NSDictionary*)
+ * NSString departure Departure point name
+ * NSString destination Destination point name
+ * NSArray waypoints CLLocations for trip
+ * NSNumber length Length of the trip
+ * NSString readableLength Human readable length
+ */
 -(void)finishPlanning {
     
     if(self.completionBlock != nil) {
@@ -115,7 +123,7 @@
     departure = (departure == nil) ? @"" : departure;
     destination = (destination == nil) ? @"" : destination;
     
-    NSDictionary *trip = @{@"departure": departure, @"destination": destination, @"waypoints": waypoints, @"points": points, @"length": totalDistance};
+    NSDictionary *trip = @{@"departure": departure, @"destination": destination, @"waypoints": waypoints, @"points": points, @"length": totalDistance, @"readableLength": [NSString stringWithDistance:[totalDistance doubleValue]]};
     
     [self.delegate planCompleted:self withPlan:trip];
 }
