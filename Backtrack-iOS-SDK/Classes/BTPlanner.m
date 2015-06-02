@@ -121,8 +121,7 @@
     
     NSNumber *totalDistance = [designatedDistances valueForKeyPath:@"@sum.self"];
     
-    NSDictionary *trip = @{@"departure": departure, @"destination": destination, @"waypoints": waypoints, @"points": points, @"length": totalDistance, @"readableLength": [NSString stringWithDistance:[totalDistance doubleValue]]};
-    
+    NSDictionary *trip = @{@"departure": departure, @"destination": destination, @"waypoints": waypoints, @"points": points, @"length": totalDistance};
     [self.delegate planCompleted:self withPlan:trip];
 }
 
