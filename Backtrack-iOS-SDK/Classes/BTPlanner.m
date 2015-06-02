@@ -97,6 +97,7 @@
  * NSDictionary departure Departure point name
  * NSDictionary destination Destination point name
  * NSArray waypoints CLLocations for trip
+ * NSArray points Contains NSDictionary objects (name, description) for trip points
  * NSNumber length Length of the trip
  * NSString readableLength Human readable length
  */
@@ -115,7 +116,7 @@
     for(NSNumber *number in designatedRoutes) {
         NSDictionary *waypointQuery = [[BTDatabase singleton] waypointsForRoute:[NSString stringWithFormat:@"%@", number]];
         [waypoints addObjectsFromArray:waypointQuery[@"waypoints"]];
-        [points addObject:waypointQuery[@"name"]];
+        [points addObject:@{@"name":waypointQuery[@"name"], @"description":waypointQuery[@"description"]}];
     }
     
     NSNumber *totalDistance = [designatedDistances valueForKeyPath:@"@sum.self"];

@@ -351,7 +351,7 @@ static BTDatabase *_database;
 
 -(NSDictionary*)waypointsForRoute:(NSString*)routeID {
     NSMutableArray *waypoints = [[NSMutableArray alloc] init];
-    FMResultSet *set = [_database executeQuery:@"SELECT r.waypoints, r.length, t.name FROM routes r, trip_points t WHERE r.id = ? AND r.to_point_id = t.id", routeID];
+    FMResultSet *set = [_database executeQuery:@"SELECT r.waypoints, r.length, t.name, t.description FROM routes r, trip_points t WHERE r.id = ? AND r.to_point_id = t.id", routeID];
     
     if([set next]) {
         NSData *waypointData = [[set stringForColumn:@"waypoints"] dataUsingEncoding:NSUTF8StringEncoding];
@@ -363,7 +363,12 @@ static BTDatabase *_database;
             [waypoints addObject:location];
         }
         
-        return @{@"name":[BTDatabase localizeDynamicContent:[set stringForColumn:@"name"]], @"waypoints": waypoints, @"length":[set stringForColumn:@"length"]};
+        return @{
+            @"name":[BTDatabase localizeDynamicContent:[set stringForColumn:@"name"]],
+            @"description":[BTDatabase localizeDynamicContent:[set stringForColumn:@"description"]],
+            @"waypoints": waypoints,
+            @"length":[set stringForColumn:@"length"]
+        };
     }
     
     return nil;
