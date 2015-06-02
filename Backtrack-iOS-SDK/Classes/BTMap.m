@@ -13,6 +13,7 @@
 -(id)init {
     // no need for an access token, we are completely offline
     [[RMConfiguration sharedInstance] setAccessToken:@"<random string>"];
+    loadedAnnotations = [[NSMutableDictionary alloc] init];
     
     return [super init];
 }
@@ -56,12 +57,26 @@
             [mapView addAnnotation:annotation];
         }
         
-        loadedAnnotations = [NSDictionary dictionaryWithDictionary:annotations];
+        [loadedAnnotations addEntriesFromDictionary:annotations];
     });
 }
 
-- (RMMapLayer *)mapView:(RMMapView *)map_view layerForAnnotation:(RMAnnotation *)annotation
-{
+- (RMMapLayer *)mapView:(RMMapView *)map_view layerForAnnotation:(RMAnnotation *)annotation {
+    
+    if([annotation.userInfo objectForKey:@"waypoints"] != nil) {
+
+        RMShape *shape = [[RMShape alloc] initWithView:mapView];
+        
+        shape.lineColor = [UIColor redColor];
+        shape.lineWidth = 5.0;
+        
+        for (CLLocation *location in annotation.userInfo[@"waypoints"])
+            [shape addLineToCoordinate:location.coordinate];
+        
+        return shape;
+    }
+    
+    
     NSString *bundlePath = [[NSBundle mainBundle] pathForResource:@"MakiBundle" ofType:@"bundle"];
     NSBundle *bundle = [NSBundle bundleWithPath:bundlePath];
     NSString *iconPath = [bundle pathForResource:(annotation.userInfo[@"icon"] != nil) ? annotation.userInfo[@"icon"] : @"circle" ofType:@"png"];
@@ -105,5 +120,40 @@
     [self.mapView setCenterCoordinate:targetAnnotation.coordinate animated:NO];
     [self.mapView selectAnnotation:targetAnnotation animated:YES];
 
+}
+
+#pragma mark show trip
+-(void)removeRoute {
+    if([loadedAnnotations objectForKey:@"route"] != nil) {
+        [mapView removeAnnotation:loadedAnnotations[@"route"]];
+        [loadedAnnotations removeObjectForKey:@"route"];
+    }
+}
+
+-(void)showTrip:(NSDictionary*)trip {
+    
+    if(trip == nil) {
+        // remove everything off the map
+        lastLoadedTrip = -1;
+        [self removeRoute];
+        return;
+    } else if([trip[@"waypoints"] isEqualToArray:waypoints]) {
+        // do nothing, already loaded
+        return;
+    }
+    
+    NSLog(@"loading new trip");
+
+    lastLoadedTrip = [trip hash];
+    
+    [self removeRoute];
+    
+    waypoints = trip[@"waypoints"];
+    RMAnnotation *annotation = [[RMAnnotation alloc] initWithMapView:self.mapView coordinate:((CLLocation*)[waypoints objectAtIndex:0]).coordinate andTitle:@"Yol"];
+    [annotation setUserInfo:trip];
+    [annotation setBoundingBoxFromLocations:waypoints];
+    
+    [mapView addAnnotation:annotation];
+    [loadedAnnotations  setObject:annotation forKey:@"route"];
 }
 @end

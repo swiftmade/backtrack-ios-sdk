@@ -16,7 +16,10 @@
 
 @interface BTMap : NSObject <RMMapViewDelegate>
 {
-    NSDictionary* loadedAnnotations;
+    NSMutableDictionary* loadedAnnotations;
+    int lastLoadedTrip;
+    
+    NSArray *waypoints;
 }
 
 @property(nonatomic, retain) RMMapView* mapView;
@@ -26,5 +29,6 @@
 -(id)initWithOfflineMap:(NSString*)mapFile onView:(UIView*)mapContainer;
 -(void)loadInterestingPoints;
 -(void)focusOnPointWithId:(NSString *)ID withZoomLevel:(int)zoom;
+-(void)showTrip:(NSDictionary*)trip;
 
 @end
