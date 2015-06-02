@@ -61,6 +61,29 @@
     });
 }
 
+-(RMMarker*)makiIconWithCallout:(id)userInfo {
+
+    NSString *bundlePath = [[NSBundle mainBundle] pathForResource:@"MakiBundle" ofType:@"bundle"];
+    NSBundle *bundle = [NSBundle bundleWithPath:bundlePath];
+    NSString *iconPath = [bundle pathForResource:(userInfo[@"icon"] != nil) ? userInfo[@"icon"] : @"circle" ofType:@"png"];
+    UIImage *icon = [UIImage imageWithContentsOfFile:iconPath];
+    
+    RMMarker *marker = [[RMMarker alloc] initWithUIImage:icon];
+    marker.canShowCallout = YES;
+    
+    UIButton* rightButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 24, 24)];
+    [rightButton setImage:[UIImage imageNamed:@"next.png"] forState:UIControlStateNormal];
+    marker.rightCalloutAccessoryView = rightButton;
+    
+    return marker;
+}
+
+-(RMMarker*)staticIcon:(NSString*)imageName {
+    RMMarker *marker = [[RMMarker alloc] initWithUIImage:[UIImage imageNamed:imageName]];
+    marker.canShowCallout = YES;
+    return marker;
+}
+
 - (RMMapLayer *)mapView:(RMMapView *)map_view layerForAnnotation:(RMAnnotation *)annotation {
     
     if([annotation.userInfo objectForKey:@"waypoints"] != nil) {
@@ -76,20 +99,11 @@
         return shape;
     }
     
+    if([annotation.userInfo objectForKey:@"staticIcon"] != nil) {
+        return [self staticIcon:annotation.userInfo[@"staticIcon"]];
+    }
     
-    NSString *bundlePath = [[NSBundle mainBundle] pathForResource:@"MakiBundle" ofType:@"bundle"];
-    NSBundle *bundle = [NSBundle bundleWithPath:bundlePath];
-    NSString *iconPath = [bundle pathForResource:(annotation.userInfo[@"icon"] != nil) ? annotation.userInfo[@"icon"] : @"circle" ofType:@"png"];
-    UIImage *icon = [UIImage imageWithContentsOfFile:iconPath];
-
-    RMMarker* marker = [[RMMarker alloc] initWithUIImage:icon];
-    marker.canShowCallout = YES;
-
-    UIButton* rightButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 24, 24)];
-    [rightButton setImage:[UIImage imageNamed:@"next.png"] forState:UIControlStateNormal];
-    marker.rightCalloutAccessoryView = rightButton;
-    
-    return marker;
+    return [self makiIconWithCallout:annotation.userInfo];
 }
 
 -(void)tapOnCalloutAccessoryControl:(UIControl *)control forAnnotation:(RMAnnotation *)annotation onMap:(RMMapView *)map {
@@ -125,7 +139,11 @@
 #pragma mark show trip
 -(void)removeRoute {
     if([loadedAnnotations objectForKey:@"route"] != nil) {
-        [mapView removeAnnotation:loadedAnnotations[@"route"]];
+        
+        for(RMAnnotation* annotation in loadedAnnotations[@"route"]) {
+            [mapView removeAnnotation:annotation];
+        }
+
         [loadedAnnotations removeObjectForKey:@"route"];
     }
 }
@@ -153,7 +171,39 @@
     [annotation setUserInfo:trip];
     [annotation setBoundingBoxFromLocations:waypoints];
     
+    RMAnnotation *start = [[RMAnnotation alloc] initWithMapView:self.mapView coordinate:((CLLocation*)[waypoints firstObject]).coordinate andTitle:trip[@"departure"][@"name"]];
+    [start setUserInfo:@{@"staticIcon": @"start.png" }];
+    
+    RMAnnotation *finish = [[RMAnnotation alloc] initWithMapView:self.mapView coordinate:((CLLocation*)[waypoints lastObject]).coordinate andTitle:trip[@"destination"][@"name"]];
+    [finish setUserInfo:@{@"staticIcon": @"finish.png"}];
+    
     [mapView addAnnotation:annotation];
-    [loadedAnnotations  setObject:annotation forKey:@"route"];
+    [mapView addAnnotation:start];
+    [mapView addAnnotation:finish];
+    
+    [loadedAnnotations  setObject:@[annotation, start, finish] forKey:@"route"];
+    [mapView setCenterCoordinate:((CLLocation*)[waypoints firstObject]).coordinate animated:YES];
+}
+
+-(void)showUserLocation:(CLLocation*)location andFocus:(BOOL)focus {
+    
+    if(loadedAnnotations[@"userLocation"] != nil) {
+        [mapView removeAnnotation:loadedAnnotations[@"userLocation"]];
+        [loadedAnnotations removeObjectForKey:@"userLocation"];
+    }
+    
+    if(location == nil) {
+        return;
+    }
+    
+    RMAnnotation *annotation = [[RMAnnotation alloc] initWithMapView:self.mapView coordinate:location.coordinate andTitle:nil];
+    [annotation setUserInfo:@{@"staticIcon": @"userLocation.png"}];
+    
+    [mapView addAnnotation:annotation];
+    [loadedAnnotations setObject:annotation forKey:@"userLocation"];
+    
+    if(focus) {
+        [mapView setCenterCoordinate:location.coordinate animated:YES];
+    }
 }
 @end
