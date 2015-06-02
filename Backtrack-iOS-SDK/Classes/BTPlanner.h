@@ -28,8 +28,8 @@
     
     NSMutableArray *currentFork;
     
-    NSString *departure;
-    NSString *destination;
+    NSDictionary *departure;
+    NSDictionary *destination;
 }
 
 @property (nonatomic, weak) IBOutlet id <BTPlannerDelegate> delegate;

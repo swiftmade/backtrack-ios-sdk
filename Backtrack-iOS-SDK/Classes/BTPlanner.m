@@ -14,8 +14,8 @@
 -(void)planForDeparture:(NSDictionary *)fromPoint andDestination:(NSDictionary *)toPoint {
     NSDictionary *pathGuide = [[BTDatabase singleton] routesBetween:fromPoint[@"id"] to:toPoint[@"id"]];
     
-    departure = fromPoint[@"name"];
-    destination = toPoint[@"name"];
+    departure = fromPoint;
+    destination = toPoint;
     
     [self initializeWithRoutes:pathGuide[@"routes"] andDistances:pathGuide[@"distances"]];
 }
@@ -94,8 +94,8 @@
 
 /**
  * Planned trip: (NSDictionary*)
- * NSString departure Departure point name
- * NSString destination Destination point name
+ * NSDictionary departure Departure point name
+ * NSDictionary destination Destination point name
  * NSArray waypoints CLLocations for trip
  * NSNumber length Length of the trip
  * NSString readableLength Human readable length
@@ -119,9 +119,6 @@
     }
     
     NSNumber *totalDistance = [designatedDistances valueForKeyPath:@"@sum.self"];
-    
-    departure = (departure == nil) ? @"" : departure;
-    destination = (destination == nil) ? @"" : destination;
     
     NSDictionary *trip = @{@"departure": departure, @"destination": destination, @"waypoints": waypoints, @"points": points, @"length": totalDistance, @"readableLength": [NSString stringWithDistance:[totalDistance doubleValue]]};
     
