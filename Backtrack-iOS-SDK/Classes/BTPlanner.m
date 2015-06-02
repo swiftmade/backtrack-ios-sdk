@@ -11,58 +11,113 @@
 @implementation BTPlanner
 
 
--(void)resolvePathGuide:(NSArray*)routes {
+-(void)planForDeparture:(NSDictionary *)fromPoint andDestination:(NSDictionary *)toPoint {
+    NSDictionary *pathGuide = [[BTDatabase singleton] routesBetween:fromPoint[@"id"] to:toPoint[@"id"]];
     
-    for(id object in routes) {
-        // We sail ahead!
-        if([object isKindOfClass:[NSNumber class]]) {
-            if(inFork == NO) {
-                NSDictionary *wObject = [[BTDatabase singleton] waypointsForRoute:[NSString stringWithFormat:@"%@", object]];
-                
-                totalLength += [wObject[@"length"] intValue];
-                [waypoints addObjectsFromArray:wObject[@"waypoints"]];
-            } else {
-                
-            }
+    departure = fromPoint[@"name"];
+    destination = toPoint[@"name"];
+    
+    [self initializeWithRoutes:pathGuide[@"routes"] andDistances:pathGuide[@"distances"]];
+}
+
+-(void)initializeWithRoutes:(NSArray*)routes andDistances:(NSArray*)distances {
+    loadedRoutes = [routes mutableCopy];
+    loadedDistances = [distances mutableCopy];
+    
+    designatedDistances = [[NSMutableArray alloc] init];
+    designatedRoutes = [[NSMutableArray alloc] init];
+    
+    currentFork = nil;
+    
+    [self process];
+}
+
+-(void)process {
+    
+    if( ! [loadedRoutes count]) {
+        [self finishPlanning];
+        return;
+    }
+    
+    id object = [loadedRoutes firstObject];
+    
+    if([object isKindOfClass:[NSArray class]]) {
+        
+        NSDictionary *waypoint = [[BTDatabase singleton] waypointsForRoute:[NSString stringWithFormat:@"%@", [object firstObject]]];
+        // already in a fork
+        if(currentFork == nil) {
+            currentFork = [[NSMutableArray alloc] init];
         }
         
-        // Fork detected!
-        if([object isKindOfClass:[NSArray class]]) {
-            inFork = YES;
+        [currentFork addObject:@{
+            @"name": waypoint[@"name"],
+            @"routes": object,
+            @"distances": [loadedDistances objectAtIndex:0]
+        }];
+        
+    } else {
+        [designatedRoutes addObject:object];
+        [designatedDistances addObject:[loadedDistances objectAtIndex:0]];
+    }
+    
+    // remove the first object
+    [loadedRoutes removeObjectAtIndex:0];
+    [loadedDistances removeObjectAtIndex:0];
+    
+    if(currentFork != nil && ( ! [loadedRoutes count] || ! [[loadedRoutes objectAtIndex:0] isKindOfClass:[NSArray class]])) {
+        // stop, prompt for fork
+        if(self.delegate != nil) {
+            [self.delegate detectedFork:self withOptions:currentFork];
         }
+    } else {
+        [self process];
     }
 }
 
+-(void)resolveFork:(int)offset {
+    
+    NSDictionary *fork = [currentFork objectAtIndex:offset];
 
--(NSArray*)getForksInRoute:(NSString*)fromPointID toPoint:(NSString*)toPointID
-{
-    currentForkIndex = 0;
-    inFork = NO;
+    BTPlanner *subPlanner = [[BTPlanner alloc] init];
+    subPlanner.delegate = self.delegate;
     
-    forks = [[NSMutableArray alloc] init];
-    NSDictionary *pathGuide = [[BTDatabase singleton] routesBetween:fromPointID to:toPointID];
+    [subPlanner setCompletionBlock:^(NSArray *routes, NSArray *distances){
+        [designatedRoutes addObjectsFromArray:routes];
+        [designatedDistances addObjectsFromArray:distances];
     
-    for(id obj in pathGuide[@"routes"]) {
-        if([obj isKindOfClass:[NSArray class]]) {
-            
-            if(inFork == NO) {
-                // beginning of a fork
-                inFork = YES;
-                [forks addObject:[[NSMutableArray alloc] init]];
-            }
-            
-            NSDictionary *waypoint = [[BTDatabase singleton] waypointsForRoute:[NSString stringWithFormat:@"%@", [obj firstObject]]];
-            [[forks objectAtIndex:currentForkIndex] addObject:waypoint[@"name"]];
-            
-        } else {
-            if(inFork == YES) {
-                inFork = NO;
-                currentForkIndex++;
-            }
-        }
+        currentFork = nil;
+        [self process];
+    }];
+    
+    [subPlanner initializeWithRoutes:fork[@"routes"] andDistances:fork[@"distances"]];
+}
+
+-(void)finishPlanning {
+    
+    if(self.completionBlock != nil) {
+        self.completionBlock(designatedRoutes, designatedDistances);
+        return;
+    } else if(self.delegate == nil) {
+        return;
     }
     
-    return forks;
+    NSMutableArray *waypoints = [[NSMutableArray alloc] init];
+    NSMutableArray *points = [[NSMutableArray alloc] init];
+    
+    for(NSNumber *number in designatedRoutes) {
+        NSDictionary *waypointQuery = [[BTDatabase singleton] waypointsForRoute:[NSString stringWithFormat:@"%@", number]];
+        [waypoints addObjectsFromArray:waypointQuery[@"waypoints"]];
+        [points addObject:waypointQuery[@"name"]];
+    }
+    
+    NSNumber *totalDistance = [designatedDistances valueForKeyPath:@"@sum.self"];
+    
+    departure = (departure == nil) ? @"" : departure;
+    destination = (destination == nil) ? @"" : destination;
+    
+    NSDictionary *trip = @{@"departure": departure, @"destination": destination, @"waypoints": waypoints, @"points": points, @"length": totalDistance};
+    
+    [self.delegate planCompleted:self withPlan:trip];
 }
 
 @end

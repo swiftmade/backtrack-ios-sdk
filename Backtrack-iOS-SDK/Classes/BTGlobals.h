@@ -16,6 +16,6 @@ typedef void (^BTBooleanResultBlock)(BOOL success, NSError *error);
 typedef void (^BTIntegerResultBlock)(NSInteger count, NSError *error);
 typedef void (^BTDownloadProgressBlock)(NSUInteger bytesRead, long long totalBytesRead, long long totalBytesExpectedToRead);
 typedef void (^BTVoidBlock)();
-typedef NSDictionary* (^BTTripForkBlock)(NSDictionary *optionA, NSDictionary *optionB);
+typedef void (^BTPlanCompletionBlock)(NSArray *routes, NSArray *distances);
 
 @end

@@ -9,16 +9,31 @@
 #import "BTDatabase.h"
 #import <CoreLocation/CoreLocation.h>
 
-@interface BTPlanner : NSObject
-{
-    NSMutableArray* waypoints;
-    NSUInteger totalLength;
+@class BTPlanner;
+
+@protocol BTPlannerDelegate<NSObject>
+-(void)detectedFork:(BTPlanner*)planner withOptions:(NSArray*)options;
+-(void)planCompleted:(BTPlanner*)planner withPlan:(NSDictionary*)plan;
+@end
+
+@interface BTPlanner : NSObject {
     
-    BOOL inFork;
-    NSMutableArray* forks;
-    NSUInteger currentForkIndex;
+    NSMutableArray *loadedRoutes;
+    NSMutableArray *loadedDistances;
+    
+    NSMutableArray *designatedRoutes;
+    NSMutableArray *designatedDistances;
+    
+    NSMutableArray *currentFork;
+    
+    NSString *departure;
+    NSString *destination;
 }
 
--(NSArray*)getForksInRoute:(NSString*)fromPointID toPoint:(NSString*)toPointID;
+@property (nonatomic, weak) IBOutlet id <BTPlannerDelegate> delegate;
+@property (nonatomic, copy) BTPlanCompletionBlock completionBlock;
+
+-(void)planForDeparture:(NSDictionary*)fromPoint andDestination:(NSDictionary*)toPoint;
+-(void)resolveFork:(int)offset;
 
 @end
