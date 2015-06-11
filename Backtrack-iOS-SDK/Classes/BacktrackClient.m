@@ -351,6 +351,29 @@ NSString* const BTUserKeyForUserDefaults = @"com.backtrack.user";
           }];
 }
 
+- (void) resetPassword:(NSString*)email completion:(BTBooleanResultBlock)completionBlock {
+    
+    // check client access token
+    if(self.clientAccessToken == nil) {
+        [self authenticateClient:^(BOOL success, NSError *error) {
+            if(success && self.clientAccessToken != nil) {
+                [self resetPassword:email completion:completionBlock];
+            } else {
+                completionBlock(NO, error);
+                NSLog(@"Error acquiring client access token: %@", [error localizedDescription]);
+            }
+        }];
+        
+        return;
+    }
+    
+    [self postPath:@"users/reset_password" parameters:@{@"email": email} success:^(id responseObject) {
+        completionBlock(YES, nil);
+    } failure:^(NSError *error) {
+        completionBlock(NO, error);
+    }];
+}
+
 #pragma mark - URL Serialization
 
 - (BTMutableURLRequest *)requestWithMethod:(NSString *)method

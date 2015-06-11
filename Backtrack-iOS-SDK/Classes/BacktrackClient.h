@@ -50,6 +50,8 @@
              toNewPassword:(NSString *)newPassword
                 completion:(BTBooleanResultBlock)completionBlock;
 
+- (void) resetPassword:(NSString*)email completion:(BTBooleanResultBlock)completionBlock;
+
 // Core methods
 - (void)getPath:(NSString *)path
      parameters:(NSDictionary *)parameters
