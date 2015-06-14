@@ -17,7 +17,7 @@
 @interface BTMap : NSObject <RMMapViewDelegate>
 {
     NSMutableDictionary* loadedAnnotations;
-    int lastLoadedTrip;
+    NSString* lastLoadedTrip;
     
     NSArray *waypoints;
 }

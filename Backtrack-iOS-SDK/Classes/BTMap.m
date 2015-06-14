@@ -148,25 +148,26 @@
     }
 }
 
+-(NSString*)generateTripHash:(NSDictionary*)trip {
+    return [NSString stringWithFormat:@"%@%@%d", trip[@"departure"], trip[@"destination"], [trip[@"waypoints"] hash]];
+}
+
 -(void)showTrip:(NSDictionary*)trip {
     
     if(trip == nil) {
         // remove everything off the map
-        lastLoadedTrip = -1;
+        lastLoadedTrip = nil;
         [self removeRoute];
         return;
-    } else if([trip[@"waypoints"] isEqualToArray:waypoints]) {
+    } else if([lastLoadedTrip isEqualToString:[self generateTripHash:trip]]) {
         // do nothing, already loaded
         return;
     }
-    
-    NSLog(@"loading new trip");
 
-    lastLoadedTrip = [trip hash];
-    
     [self removeRoute];
-    
+    lastLoadedTrip = [self generateTripHash:trip];
     waypoints = trip[@"waypoints"];
+    
     RMAnnotation *annotation = [[RMAnnotation alloc] initWithMapView:self.mapView coordinate:((CLLocation*)[waypoints objectAtIndex:0]).coordinate andTitle:@"Yol"];
     [annotation setUserInfo:trip];
     [annotation setBoundingBoxFromLocations:waypoints];
