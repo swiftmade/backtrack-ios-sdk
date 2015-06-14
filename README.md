@@ -34,8 +34,9 @@ pod "Backtrack-iOS-SDK"
 Include "BacktrackClient.h" where necessary and add the following lines to your AppDelegate, inside "didFinishLaunchingWithOptions" method
 
 ```objective-c
-    [BacktrackSDK setBaseURL:@"https://backtrack.sailbright.com/api/"];
-    [BacktrackSDK setClientID:@"yourClientId" clientSecret:@"yourClientSecret"];
+[BacktrackSDK setBaseURL:@"https://backtrack.sailbright.com/api/"];
+[BacktrackSDK setClientID:@"yourClientId" clientSecret:@"yourClientSecret"];
+[BacktrackSDK setMapBoundaries:CGVectorMake(mapNorthEnd, mapSouthEnd) westEast:CGVectorMake(mapWestEnd, mapEastEnd)];
 ```
 
 To change the color of icons (MakiBundle) downloaded together with the SDK, add the following line to your Podfile
