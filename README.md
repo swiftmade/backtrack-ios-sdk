@@ -42,7 +42,7 @@ Include "BacktrackClient.h" where necessary and add the following lines to your 
 To change the color of icons (MakiBundle) downloaded together with the SDK, add the following line to your Podfile
 
 ```ruby
-	ENV['backtrack-icon-color'] = '7d76ba'
+ENV['backtrack-icon-color'] = '7d76ba'
 ```
 
 ## Author
