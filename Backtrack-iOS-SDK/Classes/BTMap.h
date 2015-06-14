@@ -28,6 +28,8 @@
 
 -(id)initWithOfflineMap:(NSString*)mapFile onView:(UIView*)mapContainer;
 -(void)loadInterestingPoints;
+-(void)reloadMapAnnotations:(NSDictionary*)trip;
+
 -(void)focusOnPointWithId:(NSString *)ID withZoomLevel:(int)zoom;
 -(void)showTrip:(NSDictionary*)trip;
 

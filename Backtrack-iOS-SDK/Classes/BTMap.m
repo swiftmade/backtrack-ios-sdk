@@ -136,6 +136,13 @@
 
 }
 
+-(void)reloadMapAnnotations:(NSDictionary*)trip {
+    [self.mapView removeAllAnnotations];
+    [self loadInterestingPoints];
+    lastLoadedTrip = nil;
+    [self showTrip:trip];
+}
+
 #pragma mark show trip
 -(void)removeRoute {
     if([loadedAnnotations objectForKey:@"route"] != nil) {
@@ -149,7 +156,7 @@
 }
 
 -(NSString*)generateTripHash:(NSDictionary*)trip {
-    return [NSString stringWithFormat:@"%@%@%d", trip[@"departure"], trip[@"destination"], [trip[@"waypoints"] hash]];
+    return [NSString stringWithFormat:@"%@%@%lu", trip[@"departure"], trip[@"destination"], (unsigned long)[trip[@"waypoints"] hash]];
 }
 
 -(void)showTrip:(NSDictionary*)trip {
@@ -186,6 +193,7 @@
     [mapView setCenterCoordinate:((CLLocation*)[waypoints firstObject]).coordinate animated:YES];
 }
 
+#pragma mark user location
 -(BOOL)focusOnPointIfPossible:(CLLocation*)location {
     CGVector northSouth = [BacktrackSDK getNorthSouthEnds];
     CGVector westEast = [BacktrackSDK getWestEastEnds];
