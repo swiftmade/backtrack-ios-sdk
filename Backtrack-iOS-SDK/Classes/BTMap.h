@@ -30,6 +30,8 @@
 -(void)loadInterestingPoints;
 -(void)focusOnPointWithId:(NSString *)ID withZoomLevel:(int)zoom;
 -(void)showTrip:(NSDictionary*)trip;
+
+-(BOOL)focusOnPointIfPossible:(CLLocation*)location;
 -(void)showUserLocation:(CLLocation*)location andFocus:(BOOL)focus;
 
 @end

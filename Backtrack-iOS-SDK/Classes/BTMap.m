@@ -186,6 +186,22 @@
     [mapView setCenterCoordinate:((CLLocation*)[waypoints firstObject]).coordinate animated:YES];
 }
 
+-(BOOL)focusOnPointIfPossible:(CLLocation*)location {
+    CGVector northSouth = [BacktrackSDK getNorthSouthEnds];
+    CGVector westEast = [BacktrackSDK getWestEastEnds];
+    
+    if(location.coordinate.latitude > northSouth.dx || location.coordinate.latitude < northSouth.dy) {
+        return false;
+    }
+    
+    if(location.coordinate.longitude < westEast.dx || location.coordinate.longitude > westEast.dy) {
+        return false;
+    }
+    
+    [mapView setCenterCoordinate:location.coordinate animated:YES];
+    return true;
+}
+
 -(void)showUserLocation:(CLLocation*)location andFocus:(BOOL)focus {
     
     if(loadedAnnotations[@"userLocation"] != nil) {
@@ -196,7 +212,7 @@
     if(location == nil) {
         return;
     }
-    
+
     RMAnnotation *annotation = [[RMAnnotation alloc] initWithMapView:self.mapView coordinate:location.coordinate andTitle:nil];
     [annotation setUserInfo:@{@"staticIcon": @"userLocation.png"}];
     
@@ -204,7 +220,7 @@
     [loadedAnnotations setObject:annotation forKey:@"userLocation"];
     
     if(focus) {
-        [mapView setCenterCoordinate:location.coordinate animated:YES];
+        [self focusOnPointIfPossible:location];
     }
 }
 @end

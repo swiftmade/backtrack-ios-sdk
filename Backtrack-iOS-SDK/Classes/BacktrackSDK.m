@@ -95,4 +95,27 @@
     return error;
 }
 
+#pragma mark boundaries
++ (void) setMapBoundaries:(CGVector)northSouth westEast:(CGVector)westEast {
+    NSDictionary *boundaries = @{
+        @"north": [NSNumber numberWithFloat:northSouth.dx],
+        @"south": [NSNumber numberWithFloat:northSouth.dy],
+        @"west": [NSNumber numberWithFloat:westEast.dx],
+        @"east": [NSNumber numberWithFloat:westEast.dy]
+    };
+    
+    [[NSUserDefaults standardUserDefaults] setObject:boundaries forKey:BOUNDARIES_KEY];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
++ (CGVector)getNorthSouthEnds {
+    NSDictionary *boundaries = [[NSUserDefaults standardUserDefaults] objectForKey:BOUNDARIES_KEY];
+    return CGVectorMake([boundaries[@"north"] floatValue], [boundaries[@"south"] floatValue]);
+}
+
++ (CGVector)getWestEastEnds {
+    NSDictionary *boundaries = [[NSUserDefaults standardUserDefaults] objectForKey:BOUNDARIES_KEY];
+    return CGVectorMake([boundaries[@"west"] floatValue], [boundaries[@"east"] floatValue]);
+}
+
 @end

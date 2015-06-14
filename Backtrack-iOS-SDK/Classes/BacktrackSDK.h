@@ -12,11 +12,13 @@
 #define CLIENT_ID_KEY @"backtrackClientID"
 #define CLIENT_SECRET_KEY @"backtrackClientSecret"
 #define API_BASE_URL_KEY @"apiBaseURl"
+#define BOUNDARIES_KEY @"bt_boundaries"
 
 @interface BacktrackSDK : NSObject
 
 + (void) setClientID:(NSString*)clientId clientSecret:(NSString*)clientSecret;
 + (void) setBaseURL: (NSString*)baseURL;
++ (void) setMapBoundaries:(CGVector)northSouth westEast:(CGVector)westEast;
 
 + (NSURL *) baseURL;
 + (NSString *) clientID;
@@ -26,5 +28,7 @@
 + (NSString*) language;
 + (NSError *)authenticationErrorForResponse:(NSDictionary *)response;
 + (NSError *)serverErrorForResponse:(NSDictionary *)response;
-
+// Map Boundaries
++ (CGVector)getNorthSouthEnds;
++ (CGVector)getWestEastEnds;
 @end
