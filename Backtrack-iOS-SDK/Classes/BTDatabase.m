@@ -126,7 +126,7 @@ static BTDatabase *_database;
     FMResultSet *s;
     
     if(type != nil && ! [type isKindOfClass:[NSNull class]]) {
-        s = [_database executeQuery:[NSString stringWithFormat:@"%@ WHERE t.icon = ?", query], type];
+        s = [_database executeQuery:[NSString stringWithFormat:@"%@ WHERE t.short_code = ?", query], type];
     } else {
         s = [_database executeQuery:query];
     }
@@ -225,7 +225,7 @@ static BTDatabase *_database;
         flowering_high = [components month];
     }
     
-    FMResultSet* set = [_database executeQuery:@"SELECT * FROM flowers WHERE flowering_low <= ? AND flowering_high >= ? ORDER BY latin_name ASC", [NSString stringWithFormat:@"%d", flowering_high], [NSString stringWithFormat:@"%d", flowering_low]];
+    FMResultSet* set = [_database executeQuery:@"SELECT * FROM flowers WHERE flowering_low <= ? AND flowering_high >= ? ORDER BY latin_name ASC", [NSString stringWithFormat:@"%lu", flowering_high], [NSString stringWithFormat:@"%lu", flowering_low]];
     
     while([set next]) {
         [results addObject:@{
