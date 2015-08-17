@@ -9,5 +9,8 @@
 #ifndef Pods_Backtrack_h
 #define Pods_Backtrack_h
 
+#import "BacktrackClient.h"
+#import "BTMap.h"
+#import "BTPlanner.h"
 
 #endif
