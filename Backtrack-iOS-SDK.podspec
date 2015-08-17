@@ -23,7 +23,7 @@ Pod::Spec.new do |spec|
   }
   spec.requires_arc = true
   spec.license      = { :type => 'APACHE2', :file => 'LICENSE' }
-  spec.dependency 'Mapbox-iOS-SDK', '1.6.0'
+  spec.dependency 'Mapbox-iOS-SDK', '~> 1.6.0'
   spec.dependency 'AFNetworking', '~> 2.0'
   spec.dependency 'FMDB'
 end
