@@ -9,7 +9,7 @@
 
 Pod::Spec.new do |spec|
   spec.name         = 'Backtrack-iOS-SDK'
-  spec.version      = '1.0.2'
+  spec.version      = '1.0.3'
   spec.summary      = 'An SDK for Backtrack Back-End Service'
   spec.homepage     = 'https://github.com/aozisik/backtrack-ios-sdk'
   spec.author       = { 'Ahmet Ozisik' => 'ozisikahmet@gmail.com' }
