@@ -213,19 +213,19 @@ static BTDatabase *_database;
     
     NSMutableArray* results = [[NSMutableArray alloc] init];
     
-    NSUInteger flowering_low = 1;
-    NSUInteger flowering_high = 12;
+    int flowering_low = 1;
+    int flowering_high = 12;
 
     if(byMonth) {
         NSDate *currentDate = [NSDate date];
         NSCalendar* calendar = [NSCalendar currentCalendar];
         NSDateComponents* components = [calendar components:NSYearCalendarUnit|NSMonthCalendarUnit|NSDayCalendarUnit fromDate:currentDate]; // Get necessary date components
         
-        flowering_low = [components month];
-        flowering_high = [components month];
+        flowering_low = (int)[components month];
+        flowering_high = (int)[components month];
     }
     
-    FMResultSet* set = [_database executeQuery:@"SELECT * FROM flowers WHERE flowering_low <= ? AND flowering_high >= ? ORDER BY latin_name ASC", [NSString stringWithFormat:@"%lu", flowering_high], [NSString stringWithFormat:@"%lu", flowering_low]];
+    FMResultSet* set = [_database executeQuery:@"SELECT * FROM flowers WHERE flowering_low <= ? AND flowering_high >= ? ORDER BY latin_name ASC", [NSString stringWithFormat:@"%d", flowering_high], [NSString stringWithFormat:@"%d", flowering_low]];
     
     while([set next]) {
         [results addObject:@{
